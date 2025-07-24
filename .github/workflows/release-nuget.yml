@@ -1,0 +1,36 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Create a release on NuGet
+
+on:
+  push:
+    tags:
+    - "v[0-9]+.[0-9]+.[0-9]+"
+
+env:
+    LIB_CSPROJ: Path_To_Lib
+    PACKAGE_NAME: Package_Name
+
+jobs:
+  release-nuget:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Verify commit exists in origin/main
+      run: |
+        git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+        git branch --remote --contains | grep origin/main
+
+    - name: Get version information tag
+      id: get_version
+      uses: battila7/get-version-action@v2
+    - name: Pack
+      run: dotnet pack -c Release -p:PackageVersion=${{steps.get_version.outputs.version-without-v}} -o . --include-symbols --include-source
+    - name: Publish
+      env:
+        API_KEY: ${{secrets.NUGET_KEY}}
+      run: |
+        dotnet nuget push ${{env.PACKAGE_NAME}}.${{ steps.get_version.outputs.version-without-v }}.nupkg --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
+        dotnet nuget push ${{env.PACKAGE_NAME}}.${{ steps.get_version.outputs.version-without-v }}.snupkg --api-key ${{secrets.NUGET_KEY}} --source https://symbols.nuget.org/

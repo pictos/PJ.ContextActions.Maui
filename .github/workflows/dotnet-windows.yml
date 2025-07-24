@@ -1,0 +1,75 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: Build project on Windows
+
+on:
+  push:
+    branches: [ "main" ]
+    paths-ignore:
+      - "**.md"
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+  
+
+env:
+    LIB_CSPROJ: Path_To_Plugin
+    SAMPLE_CSPROJ: Path_To_Sample
+    NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
+    CurrentSemanticVersionBase: '99.0.0'
+
+jobs:
+  build:
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+    
+    - name: Get Nuget version and Name for PR
+      if: ${{ github.event_name == 'pull_request' }}
+      run: |
+        echo "NugetPackageVersion=${{ env.CurrentSemanticVersionBase }}-build-${{ github.event.pull_request.number }}.${{ github.run_number }}+${{ github.sha }}"
+      shell: bash
+    
+    - name: Workload install
+      run: dotnet workload install maui
+    
+    - name: Restore library dependencies
+      run: dotnet restore ${{env.LIB_CSPROJ}}
+    
+    - name: Restore sample dependencies
+      run: dotnet restore ${{env.SAMPLE_CSPROJ}}
+    
+    - name: Build library
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+    
+    - name: Build Sample app
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release --no-restore
+
+    - name: Create Nuget
+      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --no-restore --no-build --include-symbols --include-source
+    
+    - name: Copy NuGet Packages to Staging Directory
+      if: ${{ runner.os == 'Windows' && !startsWith(github.ref, 'refs/tags/') }}
+      run: |
+        mkdir -p ${{ github.workspace }}/nuget
+        Get-ChildItem -Path ${{env.Package_Creation_Path}} -Recurse | Where-Object { $_.Extension -match "nupkg" } | Copy-Item -Destination "${{ github.workspace }}/nuget"
+      shell: pwsh
+
+    - name: List NuGet packages found
+      run: |
+        Get-ChildItem -Path "${{ github.workspace }}/nuget" | Format-Table Name
+      shell: pwsh
+
+    - name: Publish Packages
+      uses: actions/upload-artifact@v4
+      with:
+        name: packages
+        path: ${{ github.workspace }}/nuget/
