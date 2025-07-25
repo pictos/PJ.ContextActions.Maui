@@ -1,0 +1,6 @@
+﻿<maui:MauiWinUIApplication
+	x:Class="PJ.ContextActions.Sample.WinUI.App"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:local="using:PJ.ContextActions.Sample.WinUI"
+	xmlns:maui="using:Microsoft.Maui" />
