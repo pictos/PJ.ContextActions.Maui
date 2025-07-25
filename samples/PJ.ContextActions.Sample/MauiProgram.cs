@@ -1,9 +1,12 @@
 ﻿using Microsoft.Extensions.Logging;
 
+
 #if ANDROID
 using PJ.ContextActions.Sample.Platforms.Android;
 #elif IOS
 using PJ.ContextActions.Sample.Platforms.iOS;
+#elif WINDOWS
+using PJ.ContextActions.Sample.Platforms.Windows;
 #endif
 
 namespace PJ.ContextActions.Sample;
@@ -21,7 +24,7 @@ public static class MauiProgram
 			})
 			.ConfigureMauiHandlers(h =>
 			{
-#if IOS || ANDROID
+#if IOS || ANDROID || WINDOWS
 				h.AddHandler(typeof(MyCV), typeof(MyCVHandler));
 #endif
 			});

@@ -77,14 +77,4 @@ class MyDelegate : ReorderableItemsViewDelegator<ReorderableItemsView,
 			}
 		}
 	}
-
-	static void Log(int id)
-	{
-
-		Console.WriteLine("###############");
-		Console.WriteLine("###############");
-		Console.WriteLine($"Pressed {id}");
-		Console.WriteLine("###############");
-		Console.WriteLine("###############");
-	}
 }
