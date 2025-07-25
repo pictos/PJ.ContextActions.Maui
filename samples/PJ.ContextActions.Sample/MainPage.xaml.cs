@@ -1,23 +1,35 @@
-﻿namespace PJ.ContextActions.Sample;
+﻿using System.Diagnostics;
+
+namespace PJ.ContextActions.Sample;
 
 public partial class MainPage : ContentPage
 {
-	int count = 0;
+	public Command<object> ClickCommand { get; }
 
 	public MainPage()
 	{
 		InitializeComponent();
+		var list = new List<string>();
+
+		for (var i = 0; i < 100; i++)
+			list.Add($"Item {i}");
+
+		cv.ItemsSource = list;
+
+		ClickCommand = new Command<object>((i) =>
+		{
+			Debug.Assert(i is not null);
+
+			Debug.Assert(i is string);
+
+			System.Diagnostics.Debug.WriteLine($"Segundo item clicado: {i}");
+		});
+
+		BindingContext = this;
 	}
 
-	private void OnCounterClicked(object? sender, EventArgs e)
+	void MenuItem_Clicked(object sender, EventArgs e)
 	{
-		count++;
-
-		if (count == 1)
-			CounterBtn.Text = $"Clicked {count} time";
-		else
-			CounterBtn.Text = $"Clicked {count} times";
-
-		SemanticScreenReader.Announce(CounterBtn.Text);
+		System.Diagnostics.Debug.WriteLine("Primeiro item clicado");
 	}
 }

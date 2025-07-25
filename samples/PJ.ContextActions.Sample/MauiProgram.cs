@@ -22,7 +22,7 @@ public static class MauiProgram
 			.ConfigureMauiHandlers(h =>
 			{
 #if IOS || ANDROID
-				h.AddHandler(typeof(CollectionView), typeof(MyCVHandler));
+				h.AddHandler(typeof(MyCV), typeof(MyCVHandler));
 #endif
 			});
 
