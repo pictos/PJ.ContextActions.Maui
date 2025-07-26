@@ -72,7 +72,7 @@ class MyDelegate : ReorderableItemsViewDelegator<ReorderableItemsView,
 				var action = UIAction.Create(item.Text ?? throw new NullReferenceException("Text can't be null!"),
 					null,
 					index.ToString(),
-					_ => { item.FireClicked(); item.Command?.Execute(element); });
+					_ => { item.FireClicked(element); item.Command?.Execute(element); });
 				yield return action;
 			}
 		}
