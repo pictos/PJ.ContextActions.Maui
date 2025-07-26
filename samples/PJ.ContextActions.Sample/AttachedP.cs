@@ -11,7 +11,7 @@ public class MyCV : CollectionView
 			new ObservableCollection<MenuItem>(),
 			propertyChanged: OnContextActionsChanged);
 
-	
+
 
 	public ObservableCollection<MenuItem> ContextActions
 	{
@@ -80,7 +80,7 @@ public class MenuItem : Element
 
 	public event EventHandler? Clicked;
 
-	internal void FireClicked() => Clicked?.Invoke(this, EventArgs.Empty);
+	internal void FireClicked(object cell = null!) => Clicked?.Invoke(cell, EventArgs.Empty);
 
 	// Inherit BindingContext from parent (e.g., MyCV)
 	protected override void OnParentSet()

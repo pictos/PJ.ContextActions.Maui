@@ -30,6 +30,6 @@ public partial class MainPage : ContentPage
 
 	void MenuItem_Clicked(object sender, EventArgs e)
 	{
-		System.Diagnostics.Debug.WriteLine("Primeiro item clicado");
+		System.Diagnostics.Debug.WriteLine($"Primeiro item clicado: {sender}");
 	}
 }

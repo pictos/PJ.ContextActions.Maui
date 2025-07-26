@@ -7,27 +7,22 @@ using Microsoft.UI.Xaml.Data;
 using Microsoft.UI.Xaml.Input;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
+using static System.Reflection.BindingFlags;
 
 
 namespace PJ.ContextActions.Sample.Platforms.Windows;
 
+record CommandBag(object cvItem, MenuItem item);
 public class MyCVHandler : CollectionViewHandler
 {
 	MenuItem[]? menuItems;
-	CollectionViewSource collectionviewsource = default!;
-
-	object[] itemsSource = [];
+	Command<CommandBag>? mauiCommand;
 
 	protected override ListViewBase CreatePlatformView()
 	{
 		var listViewBase = base.CreatePlatformView();
 		listViewBase.ContainerContentChanging += OnContainerContentChanging;
 		return listViewBase;
-	}
-
-	protected override CollectionViewSource CreateCollectionViewSource()
-	{
-		return collectionviewsource = base.CreateCollectionViewSource();
 	}
 
 	// TODO grab the item inside the ItemsSource in a better way
@@ -45,20 +40,36 @@ public class MyCVHandler : CollectionViewHandler
 			menuItems = [.. myCv.ContextActions];
 		}
 
-		itemsSource = [.. (VirtualView.ItemsSource as IEnumerable)];
-
-
 		// Show your MenuFlyout here, and you have access to dataItem
 		var menuFlyout = new WMenuFlyout();
-		var index = args.ItemIndex;
+
+		var model = args.Item.CollectionViewModel();
+
+		mauiCommand ??= new Command<CommandBag>(static bag =>
+		{
+			var command = bag.item.Command;
+
+			if (command?.CanExecute(bag.cvItem) is true)
+			{
+				command.Execute(bag.cvItem);
+			}
+			bag.item.FireClicked(bag.cvItem);
+		});
+
 		foreach (var item in menuItems!)
 		{
 			item.BindingContext = VirtualView.BindingContext;
-			menuFlyout.Items.Add(new WMenuFlyoutItem { Text = item.Text, Command = item.Command, CommandParameter = itemsSource[index] });
+
+			menuFlyout.Items.Add(new WMenuFlyoutItem
+			{
+				Text = item.Text,
+				Command = mauiCommand,
+				CommandParameter = new CommandBag(model, item)
+			});
 		}
 
 
-		Debug.WriteLine($"#### Index {index} ######");
+		Debug.WriteLine($"#### Index {args.ItemIndex} ######");
 
 		// Remove previous handler to avoid multiple subscriptions
 		args.ItemContainer.ContextFlyout = menuFlyout;
@@ -67,62 +78,86 @@ public class MyCVHandler : CollectionViewHandler
 	}
 
 	// TODO grab the item inside the ItemsSource in a better way
-	void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
+	//public void ItemContainer_PointerPressed(object sender, PointerRoutedEventArgs e)
+	//{
+	//	if (!e.GetCurrentPoint(null).Properties.IsRightButtonPressed)
+	//	{
+	//		return;
+	//	}
+
+	//	// sender is the ListViewItem or GridViewItem
+	//	if (sender is not ListViewItem itemContainer)
+	//	{
+	//		return;
+	//	}
+
+	//	// Get the bound data item
+
+	//	var dataItem = itemContainer.Content;
+
+	//	var itemsSource = collectionviewsource.Source as IReadOnlyCollection<object> ?? [];
+	//	var index = -1;
+
+	//	foreach (var element in itemsSource)
+	//	{
+	//		index++;
+	//		if (element == dataItem)
+	//		{
+	//			break;
+	//		}
+	//	}
+
+
+	//	var source = VirtualView.ItemsSource;
+	//	index++;
+	//	object myObj = default!;
+	//	foreach (var obj in source)
+	//	{
+	//		index--;
+	//		if (index is 0)
+	//		{
+	//			myObj = obj;
+	//			break;
+	//		}
+	//	}
+
+
+
+	//	// Show your MenuFlyout here, and you have access to dataItem
+	//	var menuFlyout = new WMenuFlyout();
+
+	//	foreach (var item in menuItems!)
+	//	{
+	//		item.BindingContext = VirtualView.BindingContext;
+	//		menuFlyout.Items.Add(new WMenuFlyoutItem { Text = item.Text, Command = item.Command, CommandParameter = myObj });
+	//	}
+
+	//	menuFlyout.ShowAt(itemContainer, e.GetCurrentPoint(itemContainer).Position);
+
+	//	e.Handled = true;
+	//}
+}
+
+
+static class ReflectionEx
+{
+	// Microsoft.Maui.Controls.Platform.ItemTemplateContext
+	static Type? itemTemplateContextType;
+
+	public static object CollectionViewModel(this object item)
 	{
-		if (!e.GetCurrentPoint(null).Properties.IsRightButtonPressed)
-		{
-			return;
-		}
+		itemTemplateContextType ??= item.GetType();
 
-		// sender is the ListViewItem or GridViewItem
-		if (sender is not ListViewItem itemContainer)
-		{
-			return;
-		}
+		var props = itemTemplateContextType.GetProperties();
 
-		// Get the bound data item
+		var propertyInfo = itemTemplateContextType.GetProperty("Item", Instance | Public);
 
-		var dataItem = itemContainer.Content;
+		Debug.Assert(propertyInfo is not null);
 
-		var itemsSource = collectionviewsource.Source as IReadOnlyCollection<object> ?? [];
-		var index = -1;
+		var value = propertyInfo.GetValue(item, null);
 
-		foreach (var element in itemsSource)
-		{
-			index++;
-			if (element == dataItem)
-			{
-				break;
-			}
-		}
+		Debug.Assert(value is not null);
 
-
-		var source = VirtualView.ItemsSource;
-		index++;
-		object myObj = default!;
-		foreach (var obj in source)
-		{
-			index--;
-			if (index is 0)
-			{
-				myObj = obj;
-				break;
-			}
-		}
-
-
-
-		// Show your MenuFlyout here, and you have access to dataItem
-		var menuFlyout = new WMenuFlyout();
-
-		foreach (var item in menuItems!)
-		{
-			item.BindingContext = VirtualView.BindingContext;
-			menuFlyout.Items.Add(new WMenuFlyoutItem { Text = item.Text, Command = item.Command, CommandParameter = myObj });
-		}
-
-		menuFlyout.ShowAt(itemContainer, e.GetCurrentPoint(itemContainer).Position);
-
-		e.Handled = true;
+		return value;
 	}
 }
