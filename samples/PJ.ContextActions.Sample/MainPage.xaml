@@ -14,6 +14,10 @@
                 Text="Isso é um header!" />
         </local:MyCV.Header>
 
+        <local:MyCV.Footer>
+            <Label Text="HEllo I'm a Footer"/>
+        </local:MyCV.Footer>
+
         <local:MyCV.ContextActions>
             <local:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
             <local:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />

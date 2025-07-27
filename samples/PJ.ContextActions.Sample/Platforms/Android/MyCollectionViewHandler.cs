@@ -3,6 +3,7 @@ using Android.Content;
 using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using Microsoft.Maui.Controls.Handlers.Items;
+using Xamarin.Google.ErrorProne.Annotations;
 
 namespace PJ.ContextActions.Sample.Platforms.Android;
 
@@ -65,13 +66,18 @@ public class MyViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 			}
 		}
 
-		
+
 		// TODO: IS this safe? I mean, there can be only one header?
 		position -= itemsSource.HasHeader ? 1 : 0;
+		var size = itemsSource.Count - (itemsSource.HasFooter ? 1 : 0) - (itemsSource.HasHeader ? 1 : 0);
 
-		holder.ItemView.Tag = position;
-		var contextMenuListener = new ItemContextMenuListener(position);
-		holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
+		if (position >= 0 && position < size)
+		{
+			var element = itemsSource.GetItem(position + 1);
+			holder.ItemView.Tag = position;
+			var contextMenuListener = new ItemContextMenuListener(element);
+			holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
+		}
 
 		System.Diagnostics.Debug.WriteLine($"Set context menu listener for position {position}");
 	}
@@ -91,11 +97,11 @@ public class MyViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 
 public class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.View.IOnCreateContextMenuListener
 {
-	readonly int position;
+	readonly object element;
 
-	public ItemContextMenuListener(int position)
+	public ItemContextMenuListener(object element)
 	{
-		this.position = position;
+		this.element = element;
 	}
 
 	public void OnCreateContextMenu(IContextMenu? menu, global::Android.Views.View? v, IContextMenuContextMenuInfo? menuInfo)
@@ -112,34 +118,38 @@ public class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.V
 		foreach (var (index, item) in menuItems.Index())
 		{
 			var mItem = menu.Add(0, index + 1, index, item.Text)!;
-			mItem.SetOnMenuItemClickListener(new MenuItemClickListener(position,item));
+			mItem.SetOnMenuItemClickListener(new MenuItemClickListener(new(element, item)));
 		}
 
-		System.Diagnostics.Debug.WriteLine($"Floating context menu created for position: {position} (listener-based, no Activity!)");
+		System.Diagnostics.Debug.WriteLine($"Floating context menu created for position: {element} (listener-based, no Activity!)");
 	}
 }
 
 public class MenuItemClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickListener
 {
-	readonly int position;
-	readonly MenuItem menuItem;
+	readonly CommandBag bag;
 
-	public MenuItemClickListener(int position, MenuItem item)
+	public MenuItemClickListener(CommandBag bag)
 	{
-		this.menuItem = item;
+		this.bag = bag;
 	}
 
 	public bool OnMenuItemClick(IMenuItem? item)
 	{
 		if (item is null) return false;
 
-		menuItem.FireClicked();
+		var menuItem = bag.item;
+		var element = bag.cvItem;
 
-		if (menuItem.Command?.CanExecute(null) is true)
+		menuItem.FireClicked(element);
+
+		if (menuItem.Command?.CanExecute(element) is true)
 		{
-			menuItem.Command?.Execute(null);
+			menuItem.Command?.Execute(element);
 		}
 
 		return true; // Consume the click event
 	}
 }
+
+public record CommandBag(object cvItem, MenuItem item);
