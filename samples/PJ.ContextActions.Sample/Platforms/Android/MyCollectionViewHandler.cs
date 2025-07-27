@@ -1,9 +1,11 @@
-﻿using Android.Content;
+﻿using System.Security.Principal;
+using Android.Content;
 using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using Microsoft.Maui.Controls.Handlers.Items;
 
 namespace PJ.ContextActions.Sample.Platforms.Android;
+
 class MyCVHandler : CollectionViewHandler
 {
 	protected override RecyclerView CreatePlatformView()
@@ -28,8 +30,13 @@ public class MyRecyclerView : MauiRecyclerView<ReorderableItemsView, GroupableIt
 public class MyViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, IGroupableItemsViewSource>
 {
 	IGroupableItemsViewSource itemsSource = default!;
+	ReorderableItemsView collectionView;
+
+	internal static MenuItem[]? MenuItems;
+
 	public MyViewAdapter(ReorderableItemsView reorderableItemsView, Func<Microsoft.Maui.Controls.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
 	{
+		collectionView = reorderableItemsView;
 	}
 
 	protected override IGroupableItemsViewSource CreateItemsSource()
@@ -41,6 +48,24 @@ public class MyViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 	{
 		base.OnBindViewHolder(holder, position);
 
+		if (collectionView is not MyCV myCV)
+		{
+			return;
+		}
+
+		var contextActions = myCV.ContextActions;
+		if (MenuItems is null && contextActions.Count > 0)
+		{
+			MenuItems = new MenuItem[contextActions.Count];
+
+			foreach (var (index, item) in contextActions.Index())
+			{
+				item.BindingContext = myCV.BindingContext;
+				MenuItems[index] = item;
+			}
+		}
+
+		
 		// TODO: IS this safe? I mean, there can be only one header?
 		position -= itemsSource.HasHeader ? 1 : 0;
 
@@ -75,20 +100,20 @@ public class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.V
 
 	public void OnCreateContextMenu(IContextMenu? menu, global::Android.Views.View? v, IContextMenuContextMenuInfo? menuInfo)
 	{
-		if (menu == null || v is null) return;
+		if (menu is null || v is null) return;
 
-		menu.SetHeaderTitle($"Item {position}");
+		if (MyViewAdapter.MenuItems is null)
+		{
+			return;
+		}
 
-		var editItem = menu.Add(0, 1, 0, "Edit Item")!;
-		var deleteItem = menu.Add(0, 2, 1, "Delete Item")!;
-		var shareItem = menu.Add(0, 3, 2, "Share Item")!;
-		var addItem = menu.Add(0, 4, 3, "Add Item")!;
+		var menuItems = MyViewAdapter.MenuItems;
 
-
-		editItem.SetOnMenuItemClickListener(new MenuItemClickListener(position, "Edit"));
-		deleteItem.SetOnMenuItemClickListener(new MenuItemClickListener(position, "Delete"));
-		shareItem.SetOnMenuItemClickListener(new MenuItemClickListener(position, "Share"));
-		addItem.SetOnMenuItemClickListener(new MenuItemClickListener(position, "Add"));
+		foreach (var (index, item) in menuItems.Index())
+		{
+			var mItem = menu.Add(0, index + 1, index, item.Text)!;
+			mItem.SetOnMenuItemClickListener(new MenuItemClickListener(position,item));
+		}
 
 		System.Diagnostics.Debug.WriteLine($"Floating context menu created for position: {position} (listener-based, no Activity!)");
 	}
@@ -97,39 +122,22 @@ public class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.V
 public class MenuItemClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickListener
 {
 	readonly int position;
-	readonly string action;
+	readonly MenuItem menuItem;
 
-	public MenuItemClickListener(int position, string action)
+	public MenuItemClickListener(int position, MenuItem item)
 	{
-		this.position = position;
-		this.action = action;
+		this.menuItem = item;
 	}
 
 	public bool OnMenuItemClick(IMenuItem? item)
 	{
-		if (item == null) return false;
+		if (item is null) return false;
 
-		System.Diagnostics.Debug.WriteLine($"{action} selected for item at position {position}");
+		menuItem.FireClicked();
 
-		// Handle the action based on the type
-		switch (action)
+		if (menuItem.Command?.CanExecute(null) is true)
 		{
-			case "Edit":
-				// Handle edit action
-				System.Diagnostics.Debug.WriteLine($"Handling edit for position {position}");
-				break;
-			case "Delete":
-				// Handle delete action
-				System.Diagnostics.Debug.WriteLine($"Handling delete for position {position}");
-				break;
-			case "Share":
-				// Handle share action
-				System.Diagnostics.Debug.WriteLine($"Handling share for position {position}");
-				break;
-			case "Add":
-				// Handle add action
-				System.Diagnostics.Debug.WriteLine($"Handling add for position {position}");
-				break;
+			menuItem.Command?.Execute(null);
 		}
 
 		return true; // Consume the click event
