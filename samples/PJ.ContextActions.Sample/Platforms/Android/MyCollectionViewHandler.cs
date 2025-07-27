@@ -49,12 +49,15 @@ public class MyViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 	{
 		base.OnBindViewHolder(holder, position);
 
-		if (collectionView is not MyCV myCV)
+		// var items = AttachedP.GetContextActions(collectionView as CollectionView);
+
+		if (collectionView is not CollectionView  myCV)
 		{
 			return;
 		}
 
-		var contextActions = myCV.ContextActions;
+		// var contextActions = myCV.ContextActions;
+		var contextActions = AttachedP.GetContextActions(myCV);
 		if (MenuItems is null && contextActions.Count > 0)
 		{
 			MenuItems = new MenuItem[contextActions.Count];

@@ -58,7 +58,7 @@ public static class AttachedP
 
 	public static void SetContextActions(CollectionView cv, IEnumerable<MenuItem> items) => cv.SetValue(ContextActionsProperty, items);
 
-	public static IEnumerable<MenuItem> GetContextActions(CollectionView cv) => (IEnumerable<MenuItem>)cv.GetValue(ContextActionsProperty);
+	public static List<MenuItem> GetContextActions(CollectionView cv) => (List<MenuItem>)cv.GetValue(ContextActionsProperty);
 }
 
 

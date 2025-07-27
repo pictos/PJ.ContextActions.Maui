@@ -5,7 +5,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:PJ.ContextActions.Sample">
 
-    <local:MyCV x:Name="cv">
+
+        <CollectionView x:Name="cv">
+            <local:AttachedP.ContextActions>
+                <local:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
+                <local:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
+            </local:AttachedP.ContextActions>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Label Text="{Binding .}"/>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    <!-- <local:MyCV x:Name="cv">
 
         <local:MyCV.Header>
             <Label
@@ -28,6 +42,6 @@
                 <Label FontSize="30" Text="{Binding .}" />
             </DataTemplate>
         </local:MyCV.ItemTemplate>
-    </local:MyCV>
+    </local:MyCV> -->
 
 </ContentPage>

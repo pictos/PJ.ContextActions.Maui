@@ -26,6 +26,8 @@ public static class MauiProgram
 			{
 #if IOS || ANDROID || WINDOWS
 				h.AddHandler(typeof(MyCV), typeof(MyCVHandler));
+
+				h.AddHandler(typeof(CollectionView), typeof(MyCVHandler));
 #endif
 			});
 
