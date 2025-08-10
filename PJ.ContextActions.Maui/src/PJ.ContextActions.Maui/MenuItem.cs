@@ -4,7 +4,11 @@ namespace PJ.ContextActions.Maui;
 
 public class MenuItem : Element
 {
-	public string? Text { get; set; }
+	public string Text
+	{
+		get => field ?? throw new NullReferenceException("Property Text can't be null.");
+		set;
+	}
 
 	public string? Icon { get; set; }
 
