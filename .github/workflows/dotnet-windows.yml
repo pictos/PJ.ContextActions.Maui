@@ -19,6 +19,7 @@ env:
     NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
     CurrentSemanticVersionBase: '99.0.0'
     Package_Creation_Path: './src/PJ.ContextActions.Maui/bin/Release'
+    MSBUILD_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64\MSBuild.exe'
 
 jobs:
   build:
@@ -45,25 +46,31 @@ jobs:
         dotnet workload install maui-windows
         dotnet workload update
     
+    # Windows builds using MSBuild
+    - name: Find MSBuild
+      run: |
+        $msbuildPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+        echo "MSBUILD_PATH=$msbuildPath" >> $env:GITHUB_ENV
+      shell: pwsh
     
     - name: Restore library dependencies (Windows)
       run: |
-         msbuild ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+        & "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     - name: Build library (Windows)
       run: |
-         msbuild ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
+        & "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
       shell: cmd
     
     - name: Restore sample dependencies (Windows)
       run: |
-        msbuild ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+        & "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     - name: Build Sample app (Windows)
       run: |
-        msbuild ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+        & "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     # Android builds using dotnet build
