@@ -10,7 +10,7 @@ on:
 
 env:
     LIB_CSPROJ: src/PJ.ContextActions.Maui/PJ.ContextActions.Maui.csproj
-    SAMPLE_CSPROJ: samples/PJ.ContextActions.Maui.Sample/PJ.ContextActions.Maui.Sample.csproj
+    SAMPLE_CSPROJ: samples/PJ.ContextActions.Sample/PJ.ContextActions.Sample.csproj
 
 jobs:
   build:
@@ -28,7 +28,7 @@ jobs:
     - name: Setup Xcode
       uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: '16.3'
+        xcode-version: '16.4'
     
     - name: Workload install
       run: dotnet workload install maui

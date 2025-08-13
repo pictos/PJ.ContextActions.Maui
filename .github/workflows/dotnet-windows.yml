@@ -15,9 +15,10 @@ on:
 
 env:
     LIB_CSPROJ: src/PJ.ContextActions.Maui/PJ.ContextActions.Maui.csproj
-    SAMPLE_CSPROJ: samples/PJ.ContextActions.Maui.Sample/PJ.ContextActions.Maui.Sample.csproj
+    SAMPLE_CSPROJ: samples/PJ.ContextActions.Sample/PJ.ContextActions.Sample.csproj
     NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
     CurrentSemanticVersionBase: '99.0.0'
+    Package_Creation_Path: './src/PJ.ContextActions.Maui/bin/Release'
 
 jobs:
   build:
@@ -39,22 +40,38 @@ jobs:
       shell: bash
     
     - name: Workload install
-      run: dotnet workload install maui
+      run: |
+        dotnet workload install maui
+        dotnet workload install maui-windows
+        dotnet workload update
     
-    - name: Restore library dependencies
-      run: dotnet restore ${{env.LIB_CSPROJ}}
+    # Windows builds using MSBuild
+   
+    - name: Build library (Windows)
+      run: |
+         dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }}
+
+      shell: cmd
+   
+    - name: Build Sample app (Windows)
+      run: |
+          dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:SelfContained=false
+      shell: cmd
+    
+    # Android builds using dotnet build
+    
+    - name: Build library (Android)
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
     
     - name: Restore sample dependencies
       run: dotnet restore ${{env.SAMPLE_CSPROJ}}
     
-    - name: Build library
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
-    
-    - name: Build Sample app
-      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release --no-restore
+    - name: Build Sample app (Android)
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
 
+    # NuGet packaging - this will package all platforms that were built
     - name: Create Nuget
-      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --no-restore --no-build --include-symbols --include-source
+      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --include-symbols --include-source
     
     - name: Copy NuGet Packages to Staging Directory
       if: ${{ runner.os == 'Windows' && !startsWith(github.ref, 'refs/tags/') }}
