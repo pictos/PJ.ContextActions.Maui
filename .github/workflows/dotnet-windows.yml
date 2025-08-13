@@ -46,19 +46,6 @@ jobs:
         dotnet workload install maui-windows
         dotnet workload update
     
-    # Android builds using dotnet build
-    - name: Restore library dependencies
-      run: dotnet restore ${{env.LIB_CSPROJ}}
-    
-    - name: Build library (Android)
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
-    
-    - name: Restore sample dependencies
-      run: dotnet restore ${{env.SAMPLE_CSPROJ}}
-    
-    - name: Build Sample app (Android)
-      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
-    
     # Windows builds using MSBuild
     - name: Find MSBuild
       run: |
@@ -85,6 +72,19 @@ jobs:
       run: |
         & "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
+    
+    # Android builds using dotnet build
+    - name: Restore library dependencies
+      run: dotnet restore ${{env.LIB_CSPROJ}}
+    
+    - name: Build library (Android)
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+    
+    - name: Restore sample dependencies
+      run: dotnet restore ${{env.SAMPLE_CSPROJ}}
+    
+    - name: Build Sample app (Android)
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
 
     # NuGet packaging - this will package all platforms that were built
     - name: Create Nuget
