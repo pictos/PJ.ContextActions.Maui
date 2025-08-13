@@ -71,7 +71,7 @@ jobs:
 
     # NuGet packaging - this will package all platforms that were built
     - name: Create Nuget
-      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --no-restore --no-build --include-symbols --include-source
+      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --include-symbols --include-source
     
     - name: Copy NuGet Packages to Staging Directory
       if: ${{ runner.os == 'Windows' && !startsWith(github.ref, 'refs/tags/') }}
