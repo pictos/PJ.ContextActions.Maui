@@ -55,22 +55,22 @@ jobs:
     
     - name: Restore library dependencies (Windows)
       run: |
-         "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+         "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win-x64
       shell: cmd
     
     - name: Build library (Windows)
       run: |
-         "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
+         "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
       shell: cmd
     
     - name: Restore sample dependencies (Windows)
       run: |
-         "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+         "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win-x64
       shell: cmd
     
     - name: Build Sample app (Windows)
       run: |
-         "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+         "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win-x64
       shell: cmd
     
     # Android builds using dotnet build
