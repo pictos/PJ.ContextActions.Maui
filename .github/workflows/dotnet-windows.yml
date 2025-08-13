@@ -55,7 +55,7 @@ jobs:
    
     - name: Build Sample app (Windows)
       run: |
-          dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64
+          dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:SelfContained=false
       shell: cmd
     
     # Android builds using dotnet build
