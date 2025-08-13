@@ -42,8 +42,8 @@ jobs:
     - name: Workload install
       run: dotnet workload install maui
     
-    - name: Install Windows Runtime Pack
-      run: dotnet workload install microsoft-net-runtime-windows-net9.0
+    - name: Install Windows SDK
+      run: dotnet workload install maui-windows
     
     - name: Restore library dependencies
       run: dotnet restore ${{env.LIB_CSPROJ}}
