@@ -19,6 +19,7 @@ env:
     NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
     CurrentSemanticVersionBase: '99.0.0'
     Package_Creation_Path: './src/PJ.ContextActions.Maui/bin/Release'
+    MSBUILD_PATH: 'C:\Program Files\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\amd64\MSBuild.exe'
 
 jobs:
   build:
@@ -40,35 +41,52 @@ jobs:
       shell: bash
     
     - name: Workload install
-      run: dotnet workload install maui
+      run: |
+        dotnet workload install maui
+        dotnet workload install maui-windows
+        dotnet workload update
     
-    - name: Install Windows SDK
-      run: dotnet workload install maui-windows
-    
+    # Android builds using dotnet build
     - name: Restore library dependencies
       run: dotnet restore ${{env.LIB_CSPROJ}}
-    
-    - name: Restore sample dependencies
-      run: dotnet restore ${{env.SAMPLE_CSPROJ}}
-    
-    # Platform-specific builds for the library
-    - name: Build library (Windows)
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
     
     - name: Build library (Android)
       run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
     
-    - name: Build library (iOS)
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-ios -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
-    
-    # Platform-specific builds for the sample app
-    - name: Build Sample app (Windows)
-      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 --no-restore
+    - name: Restore sample dependencies
+      run: dotnet restore ${{env.SAMPLE_CSPROJ}}
     
     - name: Build Sample app (Android)
       run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
+    
+    # Windows builds using MSBuild
+    - name: Find MSBuild
+      run: |
+        $msbuildPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
+        echo "MSBUILD_PATH=$msbuildPath" >> $env:GITHUB_ENV
+      shell: pwsh
+    
+    - name: Restore library dependencies (Windows)
+      run: |
+        & "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+      shell: cmd
+    
+    - name: Build library (Windows)
+      run: |
+        & "${{ env.MSBUILD_PATH }}" ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
+      shell: cmd
+    
+    - name: Restore sample dependencies (Windows)
+      run: |
+        & "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+      shell: cmd
+    
+    - name: Build Sample app (Windows)
+      run: |
+        & "${{ env.MSBUILD_PATH }}" ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+      shell: cmd
 
-    # NuGet packaging - this will package all platforms since we've built them all above
+    # NuGet packaging - this will package all platforms that were built
     - name: Create Nuget
       run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --no-restore --no-build --include-symbols --include-source
     
