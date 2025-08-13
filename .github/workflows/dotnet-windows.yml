@@ -18,6 +18,7 @@ env:
     SAMPLE_CSPROJ: samples/PJ.ContextActions.Sample/PJ.ContextActions.Sample.csproj
     NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
     CurrentSemanticVersionBase: '99.0.0'
+    Package_Creation_Path: './src/PJ.ContextActions.Maui/bin/Release'
 
 jobs:
   build:
@@ -41,18 +42,33 @@ jobs:
     - name: Workload install
       run: dotnet workload install maui
     
+    - name: Install Windows Runtime Pack
+      run: dotnet workload install microsoft-net-runtime-windows-net9.0
+    
     - name: Restore library dependencies
       run: dotnet restore ${{env.LIB_CSPROJ}}
     
     - name: Restore sample dependencies
       run: dotnet restore ${{env.SAMPLE_CSPROJ}}
     
-    - name: Build library
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+    # Platform-specific builds for the library
+    - name: Build library (Windows)
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
     
-    - name: Build Sample app
-      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release --no-restore
+    - name: Build library (Android)
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+    
+    - name: Build library (iOS)
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-ios -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+    
+    # Platform-specific builds for the sample app
+    - name: Build Sample app (Windows)
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 --no-restore
+    
+    - name: Build Sample app (Android)
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
 
+    # NuGet packaging - this will package all platforms since we've built them all above
     - name: Create Nuget
       run: dotnet pack ${{env.LIB_CSPROJ}} -c Release --no-restore --no-build --include-symbols --include-source
     
