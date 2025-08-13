@@ -15,7 +15,7 @@ on:
 
 env:
     LIB_CSPROJ: src/PJ.ContextActions.Maui/PJ.ContextActions.Maui.csproj
-    SAMPLE_CSPROJ: samples/PJ.ContextActions.Maui.Sample/PJ.ContextActions.Maui.Sample.csproj
+    SAMPLE_CSPROJ: samples/PJ.ContextActions.Sample/PJ.ContextActions.Sample.csproj
     NugetPackageVersion: '99.0.0-preview${{ github.run_number }}'
     CurrentSemanticVersionBase: '99.0.0'
 
