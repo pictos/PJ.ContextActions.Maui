@@ -45,31 +45,25 @@ jobs:
         dotnet workload install maui-windows
         dotnet workload update
     
-    # Windows builds using MSBuild
-    - name: Find MSBuild
-      run: |
-        $msbuildPath = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest -products * -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        echo "MSBUILD_PATH=$msbuildPath" >> $env:GITHUB_ENV
-      shell: pwsh
     
     - name: Restore library dependencies (Windows)
       run: |
-        & msbuild ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+         msbuild ${{env.LIB_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     - name: Build library (Windows)
       run: |
-        & msbuild ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
+         msbuild ${{env.LIB_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64 /p:PackageVersion=${{ env.NugetPackageVersion }} /p:Version=${{ env.NugetPackageVersion }}
       shell: cmd
     
     - name: Restore sample dependencies (Windows)
       run: |
-        & msbuild ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+        msbuild ${{env.SAMPLE_CSPROJ}} /t:Restore /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     - name: Build Sample app (Windows)
       run: |
-        & msbuild ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
+        msbuild ${{env.SAMPLE_CSPROJ}} /p:Configuration=Release /p:TargetFramework=net9.0-windows10.0.19041.0 /p:RuntimeIdentifier=win10-x64
       shell: cmd
     
     # Android builds using dotnet build
