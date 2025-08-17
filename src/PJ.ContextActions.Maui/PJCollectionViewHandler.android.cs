@@ -20,7 +20,7 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 	ReorderableItemsView collectionView;
 
 	internal static MenuItem[]? MenuItems;
-	public PJViewAdapter(ReorderableItemsView reorderableItemsView, Func<global::Android.Views.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
+	public PJViewAdapter(ReorderableItemsView reorderableItemsView, Func<Microsoft.Maui.Controls.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
 	{
 		collectionView = reorderableItemsView;
 	}
