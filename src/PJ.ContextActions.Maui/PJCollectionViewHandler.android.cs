@@ -64,6 +64,8 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 		if (position >= 0 && position < size)
 		{
 			var element = itemsSource.GetItem(position + 1);
+			var contextMenuListener = new ItemContextMenuListener(element);
+			holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
 
 		}
 	}
