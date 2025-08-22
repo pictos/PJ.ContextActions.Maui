@@ -60,12 +60,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+			<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\PJ.ContextActions.Maui\PJ.ContextActions.Maui.csproj" />
+		<ProjectReference Include="..\..\src\PJ.ContextActions.Maui\PJ.ContextActions.Maui.csproj" />
 	</ItemGroup>
 
 </Project>
