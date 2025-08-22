@@ -1,47 +1,22 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-    x:Class="PJ.ContextActions.Sample.MainPage"
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:PJ.ContextActions.Sample">
+	x:Class="PJ.ContextActions.Sample.MainPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:local="clr-namespace:PJ.ContextActions.Sample"
+	xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui">
 
 
-        <CollectionView x:Name="cv">
-            <local:AttachedP.ContextActions>
-                <local:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
-                <local:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
-            </local:AttachedP.ContextActions>
+	<CollectionView x:Name="cv">
+		<pj:ContextActions.ContextActions>
+			<pj:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
+			<pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
+		</pj:ContextActions.ContextActions>
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Label Text="{Binding .}"/>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-    <!-- <local:MyCV x:Name="cv">
-
-        <local:MyCV.Header>
-            <Label
-                FontAttributes="Bold"
-                FontSize="20"
-                Text="Isso é um header!" />
-        </local:MyCV.Header>
-
-        <local:MyCV.Footer>
-            <Label Text="HEllo I'm a Footer"/>
-        </local:MyCV.Footer>
-
-        <local:MyCV.ContextActions>
-            <local:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
-            <local:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
-        </local:MyCV.ContextActions>
-
-        <local:MyCV.ItemTemplate>
-            <DataTemplate>
-                <Label FontSize="30" Text="{Binding .}" />
-            </DataTemplate>
-        </local:MyCV.ItemTemplate>
-    </local:MyCV> -->
-
+		<CollectionView.ItemTemplate>
+			<DataTemplate>
+				<Label Text="{Binding .}" />
+			</DataTemplate>
+		</CollectionView.ItemTemplate>
+	</CollectionView>
 </ContentPage>

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 
@@ -17,7 +17,7 @@
 		<PackageTags>.NET MAUI, CollectionView, ContextAction</PackageTags>
 		<PackageId>PJSouzaSoftware.ContextActions.Maui</PackageId>
 
-		<!--<PackageReadmeFile>README.md</PackageReadmeFile>-->
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/pictos/PJ.ContextActions.Maui/</RepositoryUrl>
 		<PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
 		<Product>ContextAction.Maui</Product>
@@ -33,6 +33,10 @@
 	<PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\README.md" Link="README.md" Pack="true" PackagePath="\"/>
+	</ItemGroup>
 	<ItemGroup>
 		<SourceRoot Include="$(MSBuildThisFileDirectory)/" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
@@ -41,4 +45,7 @@
 		</PackageReference>
 	</ItemGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiPackageVersion)" />
+	</ItemGroup>
 </Project>

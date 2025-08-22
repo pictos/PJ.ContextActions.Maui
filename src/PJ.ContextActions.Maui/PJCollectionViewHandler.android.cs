@@ -18,8 +18,8 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 {
 	IGroupableItemsViewSource itemsSource = default!;
 	ReorderableItemsView collectionView;
-
 	internal static MenuItem[]? MenuItems;
+
 	public PJViewAdapter(ReorderableItemsView reorderableItemsView, Func<Microsoft.Maui.Controls.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
 	{
 		collectionView = reorderableItemsView;
@@ -27,14 +27,14 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 
 	protected override IGroupableItemsViewSource CreateItemsSource()
 	{
-		return ItemsSource = base.CreateItemsSource();
+		return itemsSource = base.CreateItemsSource();
 	}
 
 	public override void OnBindViewHolder(RecyclerView.ViewHolder holder, int position)
 	{
 		base.OnBindViewHolder(holder, position);
 
-		if (collectionView is not CollectionView cv)
+		if (collectionView is not CollectionView cv || itemsSource is null)
 		{
 			return;
 		}

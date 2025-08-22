@@ -1,13 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-
-
-#if ANDROID
-using PJ.ContextActions.Sample.Platforms.Android;
-#elif IOS
-using PJ.ContextActions.Sample.Platforms.iOS;
-#elif WINDOWS
-using PJ.ContextActions.Sample.Platforms.Windows;
-#endif
+using PJ.ContextActions.Maui;
 
 namespace PJ.ContextActions.Sample;
 public static class MauiProgram
@@ -22,14 +14,7 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			})
-			.ConfigureMauiHandlers(h =>
-			{
-#if IOS || ANDROID || WINDOWS
-				h.AddHandler(typeof(MyCV), typeof(MyCVHandler));
-
-				h.AddHandler(typeof(CollectionView), typeof(MyCVHandler));
-#endif
-			});
+			.UseContextActions();
 
 #if DEBUG
 		builder.Logging.AddDebug();
