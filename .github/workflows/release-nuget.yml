@@ -27,7 +27,7 @@ jobs:
       id: get_version
       uses: battila7/get-version-action@v2
     - name: Pack
-      run: dotnet pack -c Release -p:PackageVersion=${{steps.get_version.outputs.version-without-v}} -o . --include-symbols --include-source
+      run: dotnet pack ${{env.LIB_CSPROJ}} -c Release -p:PackageVersion=${{steps.get_version.outputs.version-without-v}} -o . --include-symbols --include-source
     - name: Publish
       env:
         API_KEY: ${{secrets.NUGET_KEY}}
