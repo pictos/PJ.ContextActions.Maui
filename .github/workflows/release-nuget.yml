@@ -10,7 +10,7 @@ on:
 
 env:
     LIB_CSPROJ: src/PJ.ContextActions.Maui/PJ.ContextActions.Maui.csproj
-    PACKAGE_NAME: PJ.ContextActions.Maui
+    PACKAGE_NAME: PJSouzaSoftware.ContextActions.Maui
 
 jobs:
   release-nuget:
