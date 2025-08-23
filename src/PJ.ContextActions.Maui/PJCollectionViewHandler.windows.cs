@@ -1,5 +1,6 @@
 ﻿using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Media.Imaging;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
 
@@ -56,12 +57,19 @@ sealed class PJCollectionViewHandler : CollectionViewHandler
 		{
 			item.BindingContext = VirtualView.BindingContext;
 
-			menuFlyout.Items.Add(new WMenuFlyoutItem
+			var menuFlyoutItem = new WMenuFlyoutItem
 			{
 				Text = item.Text,
 				Command = mauiCommand,
 				CommandParameter = new CommandBag(model, item)
-			});
+			};
+
+			if (!string.IsNullOrEmpty(item.Icon))
+			{
+				menuFlyoutItem.Icon = item.Icon.CreateIconElementFromIconPath();
+			}
+
+			menuFlyout.Items.Add(menuFlyoutItem);
 		}
 
 		args.ItemContainer.ContextFlyout = menuFlyout;
