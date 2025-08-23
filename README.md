@@ -5,7 +5,8 @@
 
 ## Usage
 
-> **Note:** MacCatalyst is not supported by this library. Supported platforms are Android, iOS, and Windows (via .NET MAUI).
+> **Note:** MacCatalyst is NOT supported by this library. Supported platforms are Android, iOS, and Windows (via .NET MAUI).
+> **Note:** Android does NOT support icons, this is a platform limitation.
 
 ### 1. Installation
 Add the PJ.ContextActions.Maui [NuGet package](https://www.nuget.org/packages/PJSouzaSoftware.ContextActions.Maui) to your .NET MAUI project.
