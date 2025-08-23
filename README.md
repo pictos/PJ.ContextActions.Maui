@@ -1,5 +1,8 @@
 # PJ.ContextActions.Maui
 
+<img width="400" height="800" alt="image" src="https://github.com/user-attachments/assets/2fd7879a-fffa-4c6f-b722-0375238157bc" />
+
+
 ## Usage
 
 > **Note:** MacCatalyst is not supported by this library. Supported platforms are Android, iOS, and Windows (via .NET MAUI).
