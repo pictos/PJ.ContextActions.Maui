@@ -8,7 +8,9 @@
 > **Note:** MacCatalyst is not supported by this library. Supported platforms are Android, iOS, and Windows (via .NET MAUI).
 
 ### 1. Installation
-Add the PJ.ContextActions.Maui NuGet package to your .NET MAUI project.
+Add the PJ.ContextActions.Maui [NuGet package](https://www.nuget.org/packages/PJSouzaSoftware.ContextActions.Maui) to your .NET MAUI project.
+
+
 
 ### 2. Initialization
 In your `MauiProgram.cs`, add `.UseContextActions()` to the builder:
