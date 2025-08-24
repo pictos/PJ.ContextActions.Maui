@@ -9,7 +9,10 @@
 
 	<CollectionView x:Name="cv">
 		<pj:ContextActions.ContextActions>
-			<pj:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
+			<pj:MenuItem
+				Clicked="MenuItem_Clicked"
+				Icon="dotnet_bot.png"
+				Text="Primeiro" />
 			<pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
 		</pj:ContextActions.ContextActions>
 

@@ -69,7 +69,7 @@ sealed class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView,
 				item.BindingContext = cv.BindingContext;
 				var action = UIAction.Create(
 					item.Text,
-					null,
+					CreateImage(item.Icon),
 					index.ToString(),
 					_ =>
 					{
@@ -82,6 +82,11 @@ sealed class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView,
 					});
 
 				yield return action;
+			}
+
+			static UIImage? CreateImage(string? icon)
+			{
+				return string.IsNullOrEmpty(icon) ? null : new UIImage(icon);
 			}
 		}
 	}
