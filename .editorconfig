@@ -38,6 +38,7 @@ dotnet_style_readonly_field = true:suggestion
 dotnet_style_predefined_type_for_locals_parameters_members = true:silent
 dotnet_style_predefined_type_for_member_access = true:silent
 dotnet_style_require_accessibility_modifiers = omit_if_default:error
+dotnet_diagnostic.CA1001.severity = none
 
 # Code files
 [*.sln]
@@ -83,7 +84,7 @@ dotnet_style_require_accessibility_modifiers = omit_if_default:error
 dotnet_diagnostic.CA1063.severity = error
 
 # CA1001: Type owns disposable field(s) but is not disposable
-dotnet_diagnostic.CA1001.severity = error
+dotnet_diagnostic.CA1001.severity = none
 
 # Add braces (IDE0011)
 csharp_prefer_braces = false:warning

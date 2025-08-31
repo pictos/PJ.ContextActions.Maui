@@ -1,13 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
-	x:Class="PJ.ContextActions.Sample.MainPage"
-	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	xmlns:local="clr-namespace:PJ.ContextActions.Sample"
-	xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui">
+    x:Class="PJ.ContextActions.Sample.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:PJ.ContextActions.Sample"
+    xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui">
+
+    <Image Source="dotnet_bot.png">
+        <Image.Behaviors>
+            <pj:ContextActionBehavior>
+                <pj:ContextActionBehavior.MenuItems>
+                    <pj:MenuItem
+                        Clicked="MenuItem_Clicked"
+                        Icon="dotnet_bot.png"
+                        Text="Primeiro" />
+                    <pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
+                </pj:ContextActionBehavior.MenuItems>
+            </pj:ContextActionBehavior>
+        </Image.Behaviors>
+    </Image>
 
 
-	<CollectionView x:Name="cv">
+    <!--<CollectionView x:Name="cv">
 		<pj:ContextActions.ContextActions>
 			<pj:MenuItem
 				Clicked="MenuItem_Clicked"
@@ -21,5 +35,5 @@
 				<Label Text="{Binding .}" />
 			</DataTemplate>
 		</CollectionView.ItemTemplate>
-	</CollectionView>
+	</CollectionView>-->
 </ContentPage>
