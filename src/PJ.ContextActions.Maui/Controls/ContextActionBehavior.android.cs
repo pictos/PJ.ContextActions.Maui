@@ -13,6 +13,7 @@ partial class ContextActionBehavior : PlatformBehavior<View, AView>
 		{
 			return;
 		}
+
 		var contextMenuListener = ContextMenuListenerFactory?.Invoke() ?? new AViewContextMenuListener([.. MenuItems], bindable);
 		platformView.SetOnCreateContextMenuListener(contextMenuListener);
 	}
