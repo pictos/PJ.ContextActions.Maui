@@ -15,6 +15,11 @@ partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 		platformView.ContextFlyout = CreateMenu(bindable);
 	}
 
+	protected override void OnDetachedFrom(View bindable, FrameworkElement platformView)
+	{
+		platformView.ContextFlyout = null;
+	}
+
 	WMenuFlyout CreateMenu(View view)
 	{
 		var contextMenu = new WMenuFlyout();
