@@ -4,7 +4,7 @@ namespace PJ.ContextActions.Maui;
 partial class ContextActionBehavior : PlatformBehavior<View, UIView>
 {
 	public Func<UIContextMenuInteractionDelegate>? InteractionDelegateFactory { get; set; }
-	IUIInteraction uiInteraction = default!;
+	UIContextMenuInteraction uiInteraction = default!;
 	protected override void OnAttachedTo(View bindable, UIView platformView)
 	{
 		if (MenuItems.Count is 0)
