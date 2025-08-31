@@ -38,7 +38,8 @@ partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 			{
 				Text = item.Text,
 				Command = mauiCommand,
-				CommandParameter = new CommandBag(view, item)
+				CommandParameter = new CommandBag(view, item),
+				Icon = item.Icon?.CreateIconElementFromIconPath()
 			});
 		}
 
