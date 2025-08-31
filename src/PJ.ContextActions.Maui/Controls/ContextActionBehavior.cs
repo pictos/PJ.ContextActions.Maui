@@ -7,12 +7,7 @@ public partial class ContextActionBehavior
 }
 
 
-#if IOS
-partial class ContextActionBehavior : PlatformBehavior<View, UIKit.UIView>
-{
-
-}
-#elif ANDROID
+#if ANDROID
 partial class ContextActionBehavior : PlatformBehavior<View, Android.Views.View>
 {
 

@@ -60,34 +60,5 @@ sealed class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView,
 		var createMenu = UIMenu.Create([.. CreateMenuItems(items, cv, element)]);
 
 		return UIContextMenuConfiguration.Create(null, null, _ => createMenu);
-
-		//TODO Implement UIImage
-		static IEnumerable<UIMenuElement> CreateMenuItems(List<MenuItem> items, BindableObject cv, object element)
-		{
-			foreach (var (index, item) in items.Index())
-			{
-				item.BindingContext = cv.BindingContext;
-				var action = UIAction.Create(
-					item.Text,
-					CreateImage(item.Icon),
-					index.ToString(),
-					_ =>
-					{
-						item.FireClicked(element);
-						var command = item.Command;
-						if (command?.CanExecute(element) is true)
-						{
-							command.Execute(element);
-						}
-					});
-
-				yield return action;
-			}
-
-			static UIImage? CreateImage(string? icon)
-			{
-				return string.IsNullOrEmpty(icon) ? null : new UIImage(icon);
-			}
-		}
 	}
 }

@@ -9,6 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PJ.ContextActions.Sample", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 	ProjectSection(SolutionItems) = preProject
+		..\..\.editorconfig = ..\..\.editorconfig
 		..\..\Directory.Build.props = ..\..\Directory.Build.props
 		..\..\Directory.Build.targets = ..\..\Directory.Build.targets
 		..\..\.github\workflows\dotnet-macos.yml = ..\..\.github\workflows\dotnet-macos.yml
@@ -29,6 +30,7 @@ Global
 		{BB4B6D31-F4D0-4D72-8415-E8121DABF7BF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{915F1CBA-0179-0EE4-7467-A0E0D7DF1C32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{915F1CBA-0179-0EE4-7467-A0E0D7DF1C32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{915F1CBA-0179-0EE4-7467-A0E0D7DF1C32}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{915F1CBA-0179-0EE4-7467-A0E0D7DF1C32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{915F1CBA-0179-0EE4-7467-A0E0D7DF1C32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
