@@ -35,7 +35,8 @@ public static MauiApp CreateMauiApp()
 }
 ```
 
-### 3. Usage Example
+
+### 3. Usage Example (CollectionView)
 
 #### XAML
 Add the pj namespace and use `<pj:ContextActions.ContextActions>` inside your CollectionView:
@@ -87,6 +88,131 @@ public partial class MainPage : ContentPage
     void MenuItem_Clicked(object sender, EventArgs e)
     {
         System.Diagnostics.Debug.WriteLine($"Primeiro item clicado: {sender}");
+    }
+}
+```
+
+### 4. Using ContextActions in Any View
+
+You can use ContextActions with any view by attaching the `ContextActionBehavior` to the view's Behaviors collection. For example, to add context actions to an `Image`:
+
+> **Warning:** The `MenuItem`'s `BindingContext` will be the same as the control's `BindingContext`. However, the `ContextActionBehavior` itself does not have a `BindingContext`.
+
+#### XAML
+
+```xml
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui">
+
+    <Image Source="dotnet_bot.png">
+        <Image.Behaviors>
+            <pj:ContextActionBehavior>
+                <pj:ContextActionBehavior.MenuItems>
+                    <pj:MenuItem
+                        Clicked="MenuItem_Clicked"
+                        Icon="dotnet_bot.png"
+                        Text="Primeiro" />
+                    <pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
+                </pj:ContextActionBehavior.MenuItems>
+            </pj:ContextActionBehavior>
+        </Image.Behaviors>
+    </Image>
+</ContentPage>
+```
+
+#### Code-behind (C#)
+
+```csharp
+public partial class MainPage : ContentPage
+{
+    public Command<object> ClickCommand { get; }
+
+    public MainPage()
+    {
+        InitializeComponent();
+
+        ClickCommand = new Command<object>((i) =>
+        {
+            System.Diagnostics.Debug.WriteLine($"Segundo item clicado: {i}");
+        });
+
+        BindingContext = this;
+    }
+
+    void MenuItem_Clicked(object sender, EventArgs e)
+    {
+        System.Diagnostics.Debug.WriteLine($"Primeiro item clicado: {sender}");
+    }
+}
+```
+
+### 5. Custom Implementations for Platform-Specific Behaviors
+
+ContextActionBehavior allows you to provide your own custom implementation for platform-specific delegates and listeners.
+
+#### iOS Custom Delegate
+
+You can provide a custom `UIContextMenuInteractionDelegate` implementation by setting the `InteractionDelegateFactory` property:
+
+```csharp
+var image = new Image();
+var behavior = new ContextActionBehavior
+{
+    MenuItems = { /* your menu items */ },
+    InteractionDelegateFactory = () => new MyCustomInteractionDelegate()
+};
+image.Behaviors.Add(behavior);
+```
+
+Your custom implementation might look like:
+
+```csharp
+// You can also inherit from the Delegate used in this library and expand for that.
+public class MyCustomInteractionDelegate : UIContextMenuInteractionDelegate
+{
+    // Custom implementation for handling context menu on iOS
+    public override UIContextMenuConfiguration? GetConfigurationForMenu(UIContextMenuInteraction interaction, CGPoint location)
+    {
+        // Your custom logic here
+        return UIContextMenuConfiguration.Create(null, null, menu => {
+            // Create and return your custom UIMenu
+        });
+    }
+}
+```
+
+#### Android Custom Listener
+
+Similarly, for Android you can provide a custom `IOnCreateContextMenuListener` implementation:
+
+```csharp
+var image = new Image();
+var behavior = new ContextActionBehavior
+{
+    MenuItems = { /* your menu items */ },
+    ContextMenuListenerFactory = () => new MyCustomContextMenuListener()
+};
+image.Behaviors.Add(behavior);
+```
+
+Your custom implementation might look like:
+
+```csharp
+// You can also inherit from the Listener used in this library and expand for that.
+public class MyCustomContextMenuListener : Java.Lang.Object, Android.Views.View.IOnCreateContextMenuListener
+{
+    public void OnCreateContextMenu(IContextMenu? menu, Android.Views.View? v, IContextMenuContextMenuInfo? menuInfo)
+    {
+        // Your custom logic for creating context menu items
+        if (menu is null && v is null)
+        {
+            return;
+        }
+
+        // Add custom menu items
+        // Handle clicks, etc.
     }
 }
 ```
