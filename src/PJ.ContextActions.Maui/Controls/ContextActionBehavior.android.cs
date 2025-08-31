@@ -9,6 +9,10 @@ partial class ContextActionBehavior : PlatformBehavior<View, AView>
 
 	protected override void OnAttachedTo(View bindable, AView platformView)
 	{
+		if (MenuItems.Count is 0)
+		{
+			return;
+		}
 		var contextMenuListener = ContextMenuListenerFactory?.Invoke() ?? new AViewContextMenuListener([.. MenuItems], bindable);
 		platformView.SetOnCreateContextMenuListener(contextMenuListener);
 	}
