@@ -161,7 +161,9 @@ var image = new Image();
 var behavior = new ContextActionBehavior
 {
     MenuItems = { /* your menu items */ },
+#if IOS
     InteractionDelegateFactory = () => new MyCustomInteractionDelegate()
+#endif
 };
 image.Behaviors.Add(behavior);
 ```
@@ -192,7 +194,9 @@ var image = new Image();
 var behavior = new ContextActionBehavior
 {
     MenuItems = { /* your menu items */ },
+#if ANDROID
     ContextMenuListenerFactory = () => new MyCustomContextMenuListener()
+#endif
 };
 image.Behaviors.Add(behavior);
 ```
