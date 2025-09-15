@@ -1,32 +1,41 @@
 ﻿using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.UI.Xaml.Controls;
-using Microsoft.UI.Xaml.Media.Imaging;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
 
 namespace PJ.ContextActions.Maui;
 
-sealed class PJCollectionViewHandler : CollectionViewHandler
+public class PJCollectionViewHandler : CollectionViewHandler
 {
-	MenuItem[]? menuItems;
+	protected MenuItem[]? menuItems;
 	Command<CommandBag>? mauiCommand;
 
 	protected override ListViewBase CreatePlatformView()
 	{
 		var listView = base.CreatePlatformView();
 
-		listView.ContainerContentChanging += OnContainerContentChanging;
+		listView.ContainerContentChanging += OnContainerContentChangingDelegate;
 
 		return listView;
 	}
 
 	protected override void DisconnectHandler(ListViewBase platformView)
 	{
-		platformView.ContainerContentChanging -= OnContainerContentChanging;
+		platformView.ContainerContentChanging -= OnContainerContentChangingDelegate;
 		base.DisconnectHandler(platformView);
 	}
 
-	void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
+	/// <summary>
+	/// Handles the ContainerContentChanging event for the ListView, setting up context menus for each item.
+	/// </summary>
+	/// <param name="sender">The ListViewBase that triggered the event.</param>
+	/// <param name="args">Event arguments containing information about the changed container content.</param>
+	/// <remarks>
+	/// This method configures a context menu (MenuFlyout) for each item in the collection view.
+	/// It initializes menu items from the CollectionView's context actions, binds commands,
+	/// and sets up icons if specified. The context menu appears when the user right-clicks on an item.
+	/// </remarks>
+	protected virtual void OnContainerContentChanging(ListViewBase sender, ContainerContentChangingEventArgs args)
 	{
 		if (args.InRecycleQueue || args.ItemContainer is null)
 			return;
@@ -74,4 +83,7 @@ sealed class PJCollectionViewHandler : CollectionViewHandler
 
 		args.ItemContainer.ContextFlyout = menuFlyout;
 	}
+
+	void OnContainerContentChangingDelegate(ListViewBase sender, ContainerContentChangingEventArgs args) =>
+		OnContainerContentChanging(sender, args);
 }
