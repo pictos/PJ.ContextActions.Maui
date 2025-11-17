@@ -31,7 +31,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.0.x
+        dotnet-version: 10.0.x
     
     - name: Get Nuget version and Name for PR
       if: ${{ github.event_name == 'pull_request' }}
@@ -49,25 +49,25 @@ jobs:
    
     - name: Build library (Windows)
       run: |
-         dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }}
+         dotnet build ${{env.LIB_CSPROJ}} -c Release -f net10.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }}
 
       shell: cmd
    
     - name: Build Sample app (Windows)
       run: |
-          dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:SelfContained=false
+          dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net10.0-windows10.0.19041.0 -p:WindowsPackageType=None -p:RuntimeIdentifier=win-x64 -p:SelfContained=false
       shell: cmd
     
     # Android builds using dotnet build
     
     - name: Build library (Android)
-      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net9.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
+      run: dotnet build ${{env.LIB_CSPROJ}} -c Release -f net10.0-android -p:PackageVersion=${{ env.NugetPackageVersion }} -p:Version=${{ env.NugetPackageVersion }} --no-restore
     
     - name: Restore sample dependencies
       run: dotnet restore ${{env.SAMPLE_CSPROJ}}
     
     - name: Build Sample app (Android)
-      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net9.0-android --no-restore
+      run: dotnet build ${{env.SAMPLE_CSPROJ}} -c Release -f net10.0-android --no-restore
 
     # NuGet packaging - this will package all platforms that were built
     - name: Create Nuget
