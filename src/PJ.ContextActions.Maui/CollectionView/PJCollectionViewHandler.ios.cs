@@ -15,11 +15,9 @@ sealed class PJCollectionViewHandler : CollectionViewHandler
 
 sealed class PJReorderableItemsViewController : ReorderableItemsViewController<ReorderableItemsView>
 {
-	public ReorderableItemsView ReorderableItemsView { get; }
-
 	public PJReorderableItemsViewController(ReorderableItemsView reorderableItemsView, ItemsViewLayout layout) : base(reorderableItemsView, layout)
 	{
-		ReorderableItemsView = reorderableItemsView;
+
 	}
 
 	protected override UICollectionViewDelegateFlowLayout CreateDelegator()
@@ -28,10 +26,18 @@ sealed class PJReorderableItemsViewController : ReorderableItemsViewController<R
 	}
 }
 
-sealed class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView,
-	ReorderableItemsViewController<ReorderableItemsView>>
+/// <summary>
+/// Custom delegator for handling context menu interactions in CollectionView on iOS.
+/// Extends the ReorderableItemsViewDelegator to provide context menu functionality.
+/// </summary>
+/// <remarks>
+/// This class intercepts tap and hold gestures on collection items and displays
+/// a context menu with actions defined in the CollectionView's ContextActions property.
+/// </remarks>
+public class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView, ReorderableItemsViewController<ReorderableItemsView>>
 {
-	readonly ReorderableItemsViewController<ReorderableItemsView> itemsViewController;
+	protected ReorderableItemsViewController<ReorderableItemsView> itemsViewController;
+	List<MenuItem>? items;
 
 	public PJDelegator(ItemsViewLayout itemsViewLayout, ReorderableItemsViewController<ReorderableItemsView> itemsViewController) : base(itemsViewLayout, itemsViewController)
 	{
@@ -50,7 +56,7 @@ sealed class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView,
 		var element = vc.ItemsSource[indexPath];
 		var cv = (CollectionView)vc.ItemsView;
 
-		var items = ContextActions.GetContextActions(cv);
+		items ??= ContextActions.GetContextActions(cv);
 
 		if (items.Count is 0)
 		{

@@ -7,6 +7,7 @@
 		<!-- Uncomment to also build the tizen app. You will need to install tizen by following this: https://github.com/Samsung/Tizen.NET -->
 		<!-- <TargetFrameworks>$(TargetFrameworks);net9.0-tizen</TargetFrameworks> -->
 
+		<AllowUnsafeBlocks Condition="$(IsWindows)">true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup>

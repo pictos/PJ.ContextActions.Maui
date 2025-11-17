@@ -14,11 +14,20 @@ sealed class PJCollectionViewHandler : CollectionViewHandler
 }
 
 
-sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, IGroupableItemsViewSource>
+/// <summary>
+/// Custom adapter for CollectionView that enables context actions (menu items) on long press.
+/// </summary>
+/// <remarks>
+/// This adapter extends the standard ReorderableItemsViewAdapter to provide context menu
+/// functionality for items in a CollectionView. It manages the creation and binding of
+/// menu items to collection view items, allowing for contextual actions when a user
+/// performs a long press on an item.
+/// </remarks>
+public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, IGroupableItemsViewSource>
 {
 	IGroupableItemsViewSource itemsSource = default!;
-	ReorderableItemsView collectionView;
-	internal static MenuItem[]? MenuItems;
+	protected ReorderableItemsView collectionView;
+	protected MenuItem[]? menuItems;
 
 	public PJViewAdapter(ReorderableItemsView reorderableItemsView, Func<Microsoft.Maui.Controls.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
 	{
@@ -46,14 +55,14 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 			return;
 		}
 
-		if (MenuItems is null)
+		if (menuItems is null)
 		{
-			MenuItems = new MenuItem[contextActions.Count];
+			menuItems = new MenuItem[contextActions.Count];
 
 			foreach (var (index, item) in contextActions.Index())
 			{
 				item.BindingContext = cv.BindingContext;
-				MenuItems[index] = item;
+				menuItems[index] = item;
 			}
 		}
 
@@ -64,9 +73,8 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 		if (position >= 0 && position < size)
 		{
 			var element = itemsSource.GetItem(position + 1);
-			var contextMenuListener = new ItemContextMenuListener(element);
+			var contextMenuListener = new ItemContextMenuListener(element, menuItems);
 			holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
-
 		}
 	}
 
@@ -81,13 +89,24 @@ sealed class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 	}
 }
 
+/// <summary>
+/// Handles the creation of context menus for items in a CollectionView on Android.
+/// </summary>
+/// <remarks>
+/// This class implements the Android-specific interface for creating context menus
+/// when a user performs a long-press on an item in the CollectionView. It associates
+/// the menu items with the data element that was pressed, allowing context-specific
+/// actions to be performed.
+/// </remarks>
 sealed class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.View.IOnCreateContextMenuListener
 {
 	readonly object element;
+	readonly MenuItem[] items;
 
-	public ItemContextMenuListener(object element)
+	public ItemContextMenuListener(object element, MenuItem[] items)
 	{
 		this.element = element;
+		this.items = items;
 	}
 
 	public void OnCreateContextMenu(IContextMenu? menu, Android.Views.View? v, IContextMenuContextMenuInfo? menuInfo)
@@ -97,14 +116,7 @@ sealed class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.V
 			return;
 		}
 
-		if (PJViewAdapter.MenuItems is null)
-		{
-			return;
-		}
-
-		var menuItems = PJViewAdapter.MenuItems;
-
-		foreach (var (index, item) in menuItems.Index())
+		foreach (var (index, item) in items.Index())
 		{
 			var mItem = menu.Add(0, index + 1, index, item.Text);
 			Assert(mItem is not null);
