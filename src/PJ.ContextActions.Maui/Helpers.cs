@@ -12,23 +12,6 @@ static class Helpers
 		where T : class
 		=> weak.TryGetTarget(out var value) ? value : default;
 #if WINDOWS
-	static Type? itemTemplateContextType;
-
-	public static object ToCollectionViewModel(this object item)
-	{
-		itemTemplateContextType ??= item.GetType();
-
-		var propertyInfo = itemTemplateContextType.GetProperty("Item", Instance | Public);
-
-		Assert(propertyInfo is not null);
-
-		var value = propertyInfo.GetValue(item, null);
-
-		Assert(value is not null);
-
-		return value;
-	}
-
 	public static IconElement? CreateIconElementFromIconPath(this string iconPath)
 	{
 		try

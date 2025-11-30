@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Controls.Handlers.Items;
+using Microsoft.Maui.Controls.Platform;
 using Microsoft.UI.Xaml.Controls;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
@@ -49,7 +50,7 @@ public class PJCollectionViewHandler : CollectionViewHandler
 		}
 
 		var menuFlyout = new WMenuFlyout();
-		var model = args.Item.ToCollectionViewModel();
+		var model = ((ItemTemplateContext)args.Item).Item;
 
 		mauiCommand ??= new Command<CommandBag>(static bag =>
 		{
