@@ -3,6 +3,7 @@ using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenyFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
 
 namespace PJ.ContextActions.Maui;
+
 partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 {
 	protected override void OnAttachedTo(View bindable, FrameworkElement platformView)
@@ -27,13 +28,7 @@ partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 
 		var mauiCommand = new Command<CommandBag>(static bag =>
 		{
-			bag.item.FireClicked(bag.cvItem);
-			var command = bag.item.Command;
-
-			if (command?.CanExecute(bag.cvItem) is true)
-			{
-				command.Execute(bag.cvItem);
-			}
+			bag.HandleCommandBag();
 		});
 
 		foreach (var item in MenuItems)

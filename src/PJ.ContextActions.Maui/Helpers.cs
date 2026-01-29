@@ -11,6 +11,21 @@ static class Helpers
 	public static T? GetValueOrDefault<T>(this WeakReference<T> weak)
 		where T : class
 		=> weak.TryGetTarget(out var value) ? value : default;
+
+	public static void HandleCommandBag(this CommandBag bag)
+	{
+		var item = bag.item;
+		var command = item.Command;
+		object result = item.UseMenuResultModel ? new MenuItemResult(bag.cvItem, item.Text) : bag.cvItem;
+
+		item.FireClicked(result);
+
+		if (command?.CanExecute(result) is true)
+		{
+			command.Execute(result);
+		}
+	}
+
 #if WINDOWS
 	public static IconElement? CreateIconElementFromIconPath(this string iconPath)
 	{

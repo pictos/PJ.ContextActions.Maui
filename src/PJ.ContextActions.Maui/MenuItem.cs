@@ -21,9 +21,11 @@ public class MenuItem : Element
 		set => SetValue(CommandProperty, value);
 	}
 
+	public bool UseMenuResultModel { get; set; }
+
 	public event EventHandler? Clicked;
 
-	internal void FireClicked(object cell) => Clicked?.Invoke(cell, EventArgs.Empty);
+	internal void FireClicked(object result) => Clicked?.Invoke(result, EventArgs.Empty);
 
 	protected override void OnParentSet()
 	{
