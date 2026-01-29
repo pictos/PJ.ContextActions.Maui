@@ -62,11 +62,12 @@ static class Helpers
 				index.ToString(),
 				_ =>
 				{
-					item.FireClicked(element);
+					object result = item.UseMenuResultModel ? new MenuItemResult(item.Text, element) : element;
+					item.FireClicked(result);
 					var command = item.Command;
-					if (command?.CanExecute(element) is true)
+					if (command?.CanExecute(result) is true)
 					{
-						command.Execute(element);
+						command.Execute(result);
 					}
 				});
 
