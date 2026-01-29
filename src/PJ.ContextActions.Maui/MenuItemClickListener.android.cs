@@ -18,15 +18,7 @@ sealed class MenuItemClickListener : Java.Lang.Object, IMenuItemOnMenuItemClickL
 			return false;
 		}
 
-		var menuItem = bag.item;
-		var element = bag.cvItem;
-
-		menuItem.FireClicked(element);
-
-		if (menuItem.Command?.CanExecute(element) is true)
-		{
-			menuItem.Command.Execute(element);
-		}
+		bag.HandleCommandBag();
 
 		return true;
 	}

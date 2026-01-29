@@ -54,13 +54,7 @@ public class PJCollectionViewHandler : CollectionViewHandler
 
 		mauiCommand ??= new Command<CommandBag>(static bag =>
 		{
-			bag.item.FireClicked(bag.cvItem);
-			var command = bag.item.Command;
-
-			if (command?.CanExecute(bag.cvItem) is true)
-			{
-				command.Execute(bag.cvItem);
-			}
+			bag.HandleCommandBag();
 		});
 
 		foreach (var item in menuItems)
