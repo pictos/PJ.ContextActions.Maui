@@ -16,7 +16,7 @@ static class Helpers
 	{
 		var item = bag.item;
 		var command = item.Command;
-		object result = item.UseMenuResultModel ? new MenuItemResult(bag.cvItem, item.Text) : bag.cvItem;
+		object result = item.UseMenuResultModel ? new MenuItemResult(item.Text, bag.cvItem) : bag.cvItem;
 
 		item.FireClicked(result);
 

@@ -15,7 +15,7 @@ public partial class MainPage : ContentPage
 		for (var i = 0; i < 100; i++)
 			list.Add($"Item {i}");
 
-		cv.ItemsSource = list;
+//		cv.ItemsSource = list;
 
 		ClickCommand = new Command<MenuItemResult>((i) =>
 		{
