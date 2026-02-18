@@ -74,7 +74,7 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 		}
 
 		position -= itemsSource.HasHeader ? 1 : 0;
-		// position -= itemsSource.HasFooter ? 1 : 0;
+
 
 		var size = itemsSource.Count - (itemsSource.HasHeader ? 1 : 0) - (itemsSource.HasFooter ? 1 : 0);
 
