@@ -78,7 +78,7 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 
 		var size = itemsSource.Count - (itemsSource.HasHeader ? 1 : 0) - (itemsSource.HasFooter ? 1 : 0);
 
-		if ((uint) position < (uint)size)
+		if ((uint)position < (uint)size)
 		{
 			var element = itemsSource.GetItem(position);
 			var contextMenuListener = new ItemContextMenuListener(element, menuItems);
