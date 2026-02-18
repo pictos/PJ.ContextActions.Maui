@@ -25,7 +25,7 @@ sealed class PJCollectionViewHandler : CollectionViewHandler
 /// </remarks>
 public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, IGroupableItemsViewSource>
 {
-	IGroupableItemsViewSource itemsSource = default!;
+	IGroupableItemsViewSource? itemsSource;
 	protected ReorderableItemsView collectionView;
 	protected MenuItem[]? menuItems;
 
@@ -44,6 +44,13 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 		base.OnBindViewHolder(holder, position);
 
 		if (collectionView is not CollectionView cv || itemsSource is null)
+		{
+			return;
+		}
+
+		var virtualSource = cv.ItemsSource;
+
+		if (virtualSource is null || !virtualSource.Any())
 		{
 			return;
 		}
@@ -68,11 +75,12 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 
 		position -= itemsSource.HasHeader ? 1 : 0;
 
-		var size = itemsSource.Count - (itemsSource.HasHeader ? 1 : 0) - (itemsSource.HasHeader ? 1 : 0);
 
-		if (position >= 0 && position < size)
+		var size = itemsSource.Count - (itemsSource.HasHeader ? 1 : 0) - (itemsSource.HasFooter ? 1 : 0);
+
+		if ((uint)position < (uint)size)
 		{
-			var element = itemsSource.GetItem(position + 1);
+			var element = itemsSource.GetItem(position);
 			var contextMenuListener = new ItemContextMenuListener(element, menuItems);
 			holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
 		}
