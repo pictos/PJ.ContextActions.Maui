@@ -3,11 +3,19 @@ using Microsoft.UI.Xaml.Controls;
 #elif IOS
 using UIKit;
 #endif
+using System.Collections;
 using static System.Reflection.BindingFlags;
 
 namespace PJ.ContextActions.Maui;
 static class Helpers
 {
+
+	public static bool Any(this IEnumerable enumerable)
+	{
+		var enumerator = enumerable.GetEnumerator();
+		return enumerator.MoveNext();
+	}
+	
 	public static T? GetValueOrDefault<T>(this WeakReference<T> weak)
 		where T : class
 		=> weak.TryGetTarget(out var value) ? value : default;
