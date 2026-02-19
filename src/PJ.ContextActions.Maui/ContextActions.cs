@@ -7,8 +7,8 @@ public static class ContextActions
 
 	static object ValueCreator(BindableObject bindable) => new List<MenuItem>();
 
-	public static void SetContextActions(BindableObject cv, IEnumerable<MenuItem> items) => cv.SetValue(ContextActionsProperty, items);
+	public static void SetContextActions(CollectionView cv, IEnumerable<MenuItem> items) => cv.SetValue(ContextActionsProperty, items);
 
-	public static List<MenuItem> GetContextActions(BindableObject cv) => (List<MenuItem>)cv.GetValue(ContextActionsProperty);
+	public static List<MenuItem> GetContextActions(CollectionView cv) => (List<MenuItem>)cv.GetValue(ContextActionsProperty);
 
 }
