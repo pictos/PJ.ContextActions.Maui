@@ -48,6 +48,11 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 			return;
 		}
 
+		if (itemsSource.IsHeader(position) || itemsSource.IsFooter(position))
+		{
+			return;
+		}
+
 		var virtualSource = cv.ItemsSource;
 
 		if (virtualSource is null || !virtualSource.Any())
@@ -73,17 +78,10 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 			}
 		}
 
-		position -= itemsSource.HasHeader ? 1 : 0;
+		var element = itemsSource.GetItem(position);
+		var contextMenuListener = new ItemContextMenuListener(element, menuItems);
+		holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
 
-
-		var size = itemsSource.Count - (itemsSource.HasHeader ? 1 : 0) - (itemsSource.HasFooter ? 1 : 0);
-
-		if ((uint)position < (uint)size)
-		{
-			var element = itemsSource.GetItem(position);
-			var contextMenuListener = new ItemContextMenuListener(element, menuItems);
-			holder.ItemView.SetOnCreateContextMenuListener(contextMenuListener);
-		}
 	}
 
 	public override void OnViewRecycled(Java.Lang.Object holder)
