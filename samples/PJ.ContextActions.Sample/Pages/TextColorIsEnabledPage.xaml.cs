@@ -8,6 +8,7 @@ public partial class TextColorIsEnabledPage : ContentPage
 	public TextColorIsEnabledPage()
 	{
 		InitializeComponent();
+		BindingContext = new TextColorIsEnabledViewModel();
 	}
 
 	void OnMenuItemClicked(object sender, EventArgs e)
@@ -15,11 +16,5 @@ public partial class TextColorIsEnabledPage : ContentPage
 		var result = (MenuItemResult)sender;
 		StatusLabel.Text = $"'{result.Text}' tapped";
 		Debug.WriteLine($"[Clicked] item '{result.Text}' clicked: {result.Item}");
-	}
-
-	void OnBehaviorEnabledToggled(object sender, ToggledEventArgs e)
-	{
-		ToggledBehavior.IsEnabled = e.Value;
-		ToggledLabel.Text = e.Value ? "Long-press me" : "Context menu is disabled";
 	}
 }

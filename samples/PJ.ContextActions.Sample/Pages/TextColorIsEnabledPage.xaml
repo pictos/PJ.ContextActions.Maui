@@ -97,17 +97,12 @@
 				FontAttributes="Bold"
 				FontSize="16"
 				Text="ContextActionBehavior.IsEnabled" />
-			<Label Text="Toggle the switch to enable or disable the entire context menu at runtime." />
+			<Label Text="Press the button to toggle the entire context menu on or off at runtime." />
 
-			<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
-				<Label
-					FontSize="15"
-					Text="Context menu enabled:"
-					VerticalOptions="Center" />
-				<Switch
-					IsToggled="True"
-					Toggled="OnBehaviorEnabledToggled" />
-			</HorizontalStackLayout>
+			<Button
+				Command="{Binding ToggleCommand}"
+				HorizontalOptions="Start"
+				Text="{Binding ToggleButtonText}" />
 
 			<Border
 				Padding="16"
@@ -115,12 +110,11 @@
 				                                  Light=#f0f0f0}"
 				StrokeShape="RoundRectangle 8">
 				<Label
-					x:Name="ToggledLabel"
 					FontSize="15"
 					HorizontalOptions="Center"
 					Text="Long-press me">
 					<Label.Behaviors>
-						<pj:ContextActionBehavior x:Name="ToggledBehavior">
+						<pj:ContextActionBehavior IsEnabled="{Binding IsBehaviorEnabled}">
 							<pj:ContextActionBehavior.MenuItems>
 								<pj:MenuItem
 									Clicked="OnMenuItemClicked"
