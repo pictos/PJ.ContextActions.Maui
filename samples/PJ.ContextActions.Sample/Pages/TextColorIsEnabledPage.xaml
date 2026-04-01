@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="PJ.ContextActions.Sample.Pages.TextColorIsEnabledPage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui"
+	Title="TextColor &amp; IsEnabled">
+
+	<ScrollView>
+		<VerticalStackLayout Padding="20" Spacing="24">
+
+			<!-- Section 1: TextColor on individual menu items -->
+			<Label
+				FontAttributes="Bold"
+				FontSize="16"
+				Text="MenuItem.TextColor" />
+			<Label Text="Long-press the box to see colored menu items. Note: TextColor is supported on Android and Windows only." />
+
+			<Border
+				Padding="16"
+				BackgroundColor="{AppThemeBinding Dark=#2d2d2d,
+				                                  Light=#f0f0f0}"
+				StrokeShape="RoundRectangle 8">
+				<Label
+					FontSize="15"
+					HorizontalOptions="Center"
+					Text="Long-press me">
+					<Label.Behaviors>
+						<pj:ContextActionBehavior>
+							<pj:ContextActionBehavior.MenuItems>
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="✏️ Edit"
+									TextColor="CornflowerBlue"
+									UseMenuResultModel="True" />
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="⭐ Favourite"
+									TextColor="Gold"
+									UseMenuResultModel="True" />
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="🗑️ Delete"
+									TextColor="Crimson"
+									UseMenuResultModel="True" />
+							</pj:ContextActionBehavior.MenuItems>
+						</pj:ContextActionBehavior>
+					</Label.Behaviors>
+				</Label>
+			</Border>
+
+			<BoxView
+				HeightRequest="1"
+				Color="LightGray" />
+
+			<!-- Section 2: IsEnabled on individual menu items -->
+			<Label
+				FontAttributes="Bold"
+				FontSize="16"
+				Text="MenuItem.IsEnabled" />
+			<Label Text="Long-press the box — the 'Premium Feature' item is disabled." />
+
+			<Border
+				Padding="16"
+				BackgroundColor="{AppThemeBinding Dark=#2d2d2d,
+				                                  Light=#f0f0f0}"
+				StrokeShape="RoundRectangle 8">
+				<Label
+					FontSize="15"
+					HorizontalOptions="Center"
+					Text="Long-press me">
+					<Label.Behaviors>
+						<pj:ContextActionBehavior>
+							<pj:ContextActionBehavior.MenuItems>
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="Free Action"
+									TextColor="CornflowerBlue"
+									UseMenuResultModel="True" />
+								<pj:MenuItem
+									IsEnabled="False"
+									Text="Premium Feature 🔒"
+									TextColor="Gray"
+									UseMenuResultModel="True" />
+							</pj:ContextActionBehavior.MenuItems>
+						</pj:ContextActionBehavior>
+					</Label.Behaviors>
+				</Label>
+			</Border>
+
+			<BoxView
+				HeightRequest="1"
+				Color="LightGray" />
+
+			<!-- Section 3: ContextActionBehavior.IsEnabled -->
+			<Label
+				FontAttributes="Bold"
+				FontSize="16"
+				Text="ContextActionBehavior.IsEnabled" />
+			<Label Text="Toggle the switch to enable or disable the entire context menu at runtime." />
+
+			<HorizontalStackLayout Spacing="12" VerticalOptions="Center">
+				<Label
+					FontSize="15"
+					Text="Context menu enabled:"
+					VerticalOptions="Center" />
+				<Switch
+					IsToggled="True"
+					Toggled="OnBehaviorEnabledToggled" />
+			</HorizontalStackLayout>
+
+			<Border
+				Padding="16"
+				BackgroundColor="{AppThemeBinding Dark=#2d2d2d,
+				                                  Light=#f0f0f0}"
+				StrokeShape="RoundRectangle 8">
+				<Label
+					x:Name="ToggledLabel"
+					FontSize="15"
+					HorizontalOptions="Center"
+					Text="Long-press me">
+					<Label.Behaviors>
+						<pj:ContextActionBehavior x:Name="ToggledBehavior">
+							<pj:ContextActionBehavior.MenuItems>
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="Action 1"
+									TextColor="DarkGreen"
+									UseMenuResultModel="True" />
+								<pj:MenuItem
+									Clicked="OnMenuItemClicked"
+									Text="Action 2"
+									TextColor="DarkBlue"
+									UseMenuResultModel="True" />
+							</pj:ContextActionBehavior.MenuItems>
+						</pj:ContextActionBehavior>
+					</Label.Behaviors>
+				</Label>
+			</Border>
+
+			<Label x:Name="StatusLabel" HorizontalOptions="Center" />
+
+		</VerticalStackLayout>
+	</ScrollView>
+</ContentPage>
