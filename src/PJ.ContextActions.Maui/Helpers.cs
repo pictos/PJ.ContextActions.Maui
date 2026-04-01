@@ -64,7 +64,7 @@ static class Helpers
 		foreach (var (index, item) in items.Index())
 		{
 			item.BindingContext = cv.BindingContext;
-			var attributes = item.IsEnabled ? UIMenuElementAttributes.None : UIMenuElementAttributes.Disabled;
+			var attributes = item.IsEnabled ? (UIMenuElementAttributes)0 : UIMenuElementAttributes.Disabled;
 			var action = UIAction.Create(
 				item.Text,
 				CreateImage(item.Icon),
