@@ -65,12 +65,18 @@ public class PJCollectionViewHandler : CollectionViewHandler
 			{
 				Text = item.Text,
 				Command = mauiCommand,
-				CommandParameter = new CommandBag(model, item)
+				CommandParameter = new CommandBag(model, item),
+				IsEnabled = item.IsEnabled,
 			};
 
 			if (!string.IsNullOrEmpty(item.Icon))
 			{
 				menuFlyoutItem.Icon = item.Icon.CreateIconElementFromIconPath();
+			}
+
+			if (item.TextColor is { } textColor)
+			{
+				menuFlyoutItem.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(textColor.ToWindowsColor());
 			}
 
 			menuFlyout.Items.Add(menuFlyoutItem);

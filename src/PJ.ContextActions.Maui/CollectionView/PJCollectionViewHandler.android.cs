@@ -2,6 +2,7 @@
 using Android.Views;
 using AndroidX.RecyclerView.Widget;
 using Microsoft.Maui.Controls.Handlers.Items;
+using Microsoft.Maui.Platform;
 
 namespace PJ.ContextActions.Maui;
 
@@ -126,7 +127,22 @@ sealed class ItemContextMenuListener : Java.Lang.Object, global::Android.Views.V
 		{
 			var mItem = menu.Add(0, index + 1, index, item.Text);
 			Assert(mItem is not null);
+			mItem.SetEnabled(item.IsEnabled);
+			ApplyTextColor(mItem, item);
 			mItem.SetOnMenuItemClickListener(new MenuItemClickListener(new(element, item)));
 		}
+	}
+
+	static void ApplyTextColor(IMenuItem mItem, MenuItem item)
+	{
+		if (item.TextColor is not { } textColor)
+			return;
+
+		var spannable = new Android.Text.SpannableString(item.Text);
+		spannable.SetSpan(
+			new Android.Text.Style.ForegroundColorSpan(textColor.ToPlatform()),
+			0, item.Text.Length,
+			Android.Text.SpanTypes.ExclusiveExclusive);
+		mItem.SetTitle(spannable);
 	}
 }

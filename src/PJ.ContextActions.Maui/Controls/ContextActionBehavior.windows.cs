@@ -1,4 +1,5 @@
 ﻿using Microsoft.UI.Xaml;
+using Microsoft.UI.Xaml.Media;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenyFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
 
@@ -6,9 +7,14 @@ namespace PJ.ContextActions.Maui;
 
 partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 {
+	static partial void OnIsEnabledPropertyChanged(ContextActionBehavior behavior, bool oldValue, bool newValue)
+	{
+		// Windows ContextFlyout is set once at attach time; dynamic changes not supported
+	}
+
 	protected override void OnAttachedTo(View bindable, FrameworkElement platformView)
 	{
-		if (MenuItems.Count is 0)
+		if (!IsEnabled || MenuItems.Count is 0)
 		{
 			return;
 		}
@@ -34,13 +40,21 @@ partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 		foreach (var item in MenuItems)
 		{
 			item.BindingContext = view.BindingContext;
-			items.Add(new WMenyFlyoutItem
+			var flyoutItem = new WMenyFlyoutItem
 			{
 				Text = item.Text,
 				Command = mauiCommand,
 				CommandParameter = new CommandBag(view, item),
-				Icon = item.Icon?.CreateIconElementFromIconPath()
-			});
+				Icon = item.Icon?.CreateIconElementFromIconPath(),
+				IsEnabled = item.IsEnabled,
+			};
+
+			if (item.TextColor is { } textColor)
+			{
+				flyoutItem.Foreground = new SolidColorBrush(textColor.ToWindowsColor());
+			}
+
+			items.Add(flyoutItem);
 		}
 
 		return contextMenu;
