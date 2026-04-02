@@ -8,24 +8,24 @@ namespace PJ.ContextActions.Maui;
 
 partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 {
-	FrameworkElement? _platformView;
-	View? _bindable;
+	FrameworkElement? platformView;
+	View? bindable;
 
 	static partial void OnIsEnabledPropertyChanged(ContextActionBehavior behavior, bool oldValue, bool newValue)
 	{
-		if (behavior._platformView is null || behavior._bindable is null)
+		if (behavior.platformView is null || behavior.bindable is null)
 			return;
 
 		if (newValue && behavior.MenuItems.Count > 0)
-			behavior._platformView.ContextFlyout = behavior.CreateMenu(behavior._bindable);
+			behavior.platformView.ContextFlyout = behavior.CreateMenu(behavior.bindable);
 		else
-			behavior._platformView.ContextFlyout = null;
+			behavior.platformView.ContextFlyout = null;
 	}
 
 	protected override void OnAttachedTo(View bindable, FrameworkElement platformView)
 	{
-		_bindable = bindable;
-		_platformView = platformView;
+		this.bindable = bindable;
+		this.platformView = platformView;
 
 		if (!IsEnabled || MenuItems.Count is 0)
 		{
@@ -38,8 +38,8 @@ partial class ContextActionBehavior : PlatformBehavior<View, FrameworkElement>
 	protected override void OnDetachedFrom(View bindable, FrameworkElement platformView)
 	{
 		platformView.ContextFlyout = null;
-		_platformView = null;
-		_bindable = null;
+		this.platformView = null;
+		this.bindable = null;
 	}
 
 	WMenuFlyout CreateMenu(View view)
