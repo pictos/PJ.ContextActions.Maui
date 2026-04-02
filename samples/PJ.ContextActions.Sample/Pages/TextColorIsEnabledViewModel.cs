@@ -6,30 +6,30 @@ namespace PJ.ContextActions.Sample.Pages;
 
 public class TextColorIsEnabledViewModel : INotifyPropertyChanged
 {
-	bool _isBehaviorEnabled = true;
+	bool _isPremiumEnabled = false;
 
-	public bool IsBehaviorEnabled
+	public bool IsPremiumEnabled
 	{
-		get => _isBehaviorEnabled;
+		get => _isPremiumEnabled;
 		set
 		{
-			if (_isBehaviorEnabled == value)
+			if (_isPremiumEnabled == value)
 				return;
-			_isBehaviorEnabled = value;
+			_isPremiumEnabled = value;
 			OnPropertyChanged();
-			OnPropertyChanged(nameof(ToggleButtonText));
+			OnPropertyChanged(nameof(TogglePremiumText));
 		}
 	}
 
-	public string ToggleButtonText => IsBehaviorEnabled
-		? "Disable Context Menu"
-		: "Enable Context Menu";
+	public string TogglePremiumText => IsPremiumEnabled
+		? "Disable Premium Feature"
+		: "Enable Premium Feature";
 
-	public ICommand ToggleCommand { get; }
+	public ICommand TogglePremiumCommand { get; }
 
 	public TextColorIsEnabledViewModel()
 	{
-		ToggleCommand = new Command(() => IsBehaviorEnabled = !IsBehaviorEnabled);
+		TogglePremiumCommand = new Command(() => IsPremiumEnabled = !IsPremiumEnabled);
 	}
 
 	public event PropertyChangedEventHandler? PropertyChanged;

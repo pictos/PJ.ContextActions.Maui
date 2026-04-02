@@ -8,34 +8,11 @@ using View = Microsoft.Maui.Controls.View;
 namespace PJ.ContextActions.Maui;
 partial class ContextActionBehavior : PlatformBehavior<View, AView>
 {
-	AView? _platformView;
-	View? _bindable;
-
 	public Func<AView.IOnCreateContextMenuListener>? ContextMenuListenerFactory { get; set; }
-
-	static partial void OnIsEnabledPropertyChanged(ContextActionBehavior behavior, bool oldValue, bool newValue)
-	{
-		if (behavior._platformView is null || behavior._bindable is null)
-			return;
-
-		if (newValue && behavior.MenuItems.Count > 0)
-		{
-			var listener = behavior.ContextMenuListenerFactory?.Invoke()
-				?? new AViewContextMenuListener([.. behavior.MenuItems], behavior._bindable);
-			behavior._platformView.SetOnCreateContextMenuListener(listener);
-		}
-		else
-		{
-			behavior._platformView.SetOnCreateContextMenuListener(null);
-		}
-	}
 
 	protected override void OnAttachedTo(View bindable, AView platformView)
 	{
-		_bindable = bindable;
-		_platformView = platformView;
-
-		if (!IsEnabled || MenuItems.Count is 0)
+		if (MenuItems.Count is 0)
 		{
 			return;
 		}
@@ -47,8 +24,6 @@ partial class ContextActionBehavior : PlatformBehavior<View, AView>
 	protected override void OnDetachedFrom(View bindable, AView platformView)
 	{
 		platformView.SetOnCreateContextMenuListener(null);
-		_bindable = null;
-		_platformView = null;
 	}
 }
 
