@@ -42,22 +42,6 @@ public class PJDelegator : ReorderableItemsViewDelegator<ReorderableItemsView, R
 	public PJDelegator(ItemsViewLayout itemsViewLayout, ReorderableItemsViewController<ReorderableItemsView> itemsViewController) : base(itemsViewLayout, itemsViewController)
 	{
 		this.itemsViewController = itemsViewController;
-		itemsViewController.ItemsView.BindingContextChanged += OnBindingContextChanged;
-	}
-
-	void OnBindingContextChanged(object? sender, EventArgs e)
-	{
-		if (items is null || sender is not BindableObject bindable)
-			return;
-		foreach (var item in items)
-			item.BindingContext = bindable.BindingContext;
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing)
-			itemsViewController.ItemsView.BindingContextChanged -= OnBindingContextChanged;
-		base.Dispose(disposing);
 	}
 
 	public override UIContextMenuConfiguration? GetContextMenuConfiguration(UICollectionView collectionView, NSIndexPath indexPath, CGPoint point)

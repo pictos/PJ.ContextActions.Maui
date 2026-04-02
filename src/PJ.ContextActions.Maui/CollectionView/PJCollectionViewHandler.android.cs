@@ -33,22 +33,6 @@ public class PJViewAdapter : ReorderableItemsViewAdapter<ReorderableItemsView, I
 	public PJViewAdapter(ReorderableItemsView reorderableItemsView, Func<Microsoft.Maui.Controls.View, Context, ItemContentView>? createView = null) : base(reorderableItemsView, createView)
 	{
 		collectionView = reorderableItemsView;
-		reorderableItemsView.BindingContextChanged += OnBindingContextChanged;
-	}
-
-	void OnBindingContextChanged(object? sender, EventArgs e)
-	{
-		if (menuItems is null || sender is not BindableObject bindable)
-			return;
-		foreach (var item in menuItems)
-			item.BindingContext = bindable.BindingContext;
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing)
-			collectionView.BindingContextChanged -= OnBindingContextChanged;
-		base.Dispose(disposing);
 	}
 
 	protected override IGroupableItemsViewSource CreateItemsSource()

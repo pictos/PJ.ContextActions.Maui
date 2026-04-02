@@ -36,20 +36,6 @@ sealed class AViewContextMenuListener : Java.Lang.Object, AView.IOnCreateContext
 	{
 		this.menuItems = menuItems;
 		this.view = view;
-		view.BindingContextChanged += OnBindingContextChanged;
-	}
-
-	protected override void Dispose(bool disposing)
-	{
-		if (disposing)
-			view.BindingContextChanged -= OnBindingContextChanged;
-		base.Dispose(disposing);
-	}
-
-	void OnBindingContextChanged(object? sender, EventArgs e)
-	{
-		foreach (var item in menuItems)
-			item.BindingContext = view.BindingContext;
 	}
 
 	public void OnCreateContextMenu(Android.Views.IContextMenu? menu, AView? v, Android.Views.IContextMenuContextMenuInfo? menuInfo)
@@ -61,6 +47,7 @@ sealed class AViewContextMenuListener : Java.Lang.Object, AView.IOnCreateContext
 
 		foreach (var (index, item) in menuItems.Index())
 		{
+			item.BindingContext = view.BindingContext;
 			var mItem = menu.Add(0, index + 1, index, item.Text);
 			Assert(mItem is not null);
 			mItem.SetEnabled(item.IsEnabled);
