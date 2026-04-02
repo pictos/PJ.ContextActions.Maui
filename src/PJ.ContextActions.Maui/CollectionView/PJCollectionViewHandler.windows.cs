@@ -4,6 +4,7 @@ using Microsoft.Maui.Platform;
 using Microsoft.UI.Xaml.Controls;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
+using WSolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
 
 namespace PJ.ContextActions.Maui;
 
@@ -77,7 +78,7 @@ public class PJCollectionViewHandler : CollectionViewHandler
 
 			if (item.TextColor is { } textColor)
 			{
-				menuFlyoutItem.Foreground = new Microsoft.UI.Xaml.Media.SolidColorBrush(textColor.ToWindowsColor());
+				menuFlyoutItem.Foreground = new WSolidColorBrush(textColor.ToWindowsColor());
 			}
 
 			menuFlyout.Items.Add(menuFlyoutItem);
