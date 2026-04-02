@@ -13,9 +13,7 @@ partial class ContextActionBehavior : PlatformBehavior<View, UIView>
 			return;
 		}
 
-		var menuToCreate = CreateMenuItems(MenuItems, bindable, bindable);
-
-		var @delegate = InteractionDelegateFactory?.Invoke() ?? new InteractionDelegate([.. menuToCreate]);
+		var @delegate = InteractionDelegateFactory?.Invoke() ?? new InteractionDelegate(MenuItems, bindable, bindable);
 
 		uiInteraction = new UIContextMenuInteraction(@delegate);
 
