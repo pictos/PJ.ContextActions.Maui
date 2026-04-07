@@ -4,7 +4,8 @@ namespace PJ.ContextActions.Maui;
 partial class ContextActionBehavior : PlatformBehavior<View, UIView>
 {
 	public Func<UIContextMenuInteractionDelegate>? InteractionDelegateFactory { get; set; }
-	UIContextMenuInteraction uiInteraction = default!;
+	UIContextMenuInteraction? uiInteraction;
+
 	protected override void OnAttachedTo(View bindable, UIView platformView)
 	{
 		if (MenuItems.Count is 0)
@@ -12,9 +13,7 @@ partial class ContextActionBehavior : PlatformBehavior<View, UIView>
 			return;
 		}
 
-		var menuToCreate = CreateMenuItems(MenuItems, bindable, bindable);
-
-		var @delegate = InteractionDelegateFactory?.Invoke() ?? new InteractionDelegate([.. menuToCreate]);
+		var @delegate = InteractionDelegateFactory?.Invoke() ?? new InteractionDelegate(MenuItems, bindable, bindable);
 
 		uiInteraction = new UIContextMenuInteraction(@delegate);
 
@@ -23,7 +22,11 @@ partial class ContextActionBehavior : PlatformBehavior<View, UIView>
 
 	protected override void OnDetachedFrom(View bindable, UIView platformView)
 	{
-		platformView.RemoveInteraction(uiInteraction);
-		uiInteraction.Dispose();
+		if (uiInteraction is not null)
+		{
+			platformView.RemoveInteraction(uiInteraction);
+			uiInteraction.Dispose();
+			uiInteraction = null;
+		}
 	}
 }

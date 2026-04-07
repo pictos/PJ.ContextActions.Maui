@@ -1,13 +1,18 @@
 ﻿using Microsoft.Maui.Controls.Handlers.Items;
 using Microsoft.Maui.Controls.Platform;
+using Microsoft.Maui.Platform;
+using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using WBinding = Microsoft.UI.Xaml.Data.Binding;
 using WMenuFlyout = Microsoft.UI.Xaml.Controls.MenuFlyout;
 using WMenuFlyoutItem = Microsoft.UI.Xaml.Controls.MenuFlyoutItem;
+using WSolidColorBrush = Microsoft.UI.Xaml.Media.SolidColorBrush;
 
 namespace PJ.ContextActions.Maui;
 
 public class PJCollectionViewHandler : CollectionViewHandler
 {
+	static readonly MauiColorToWSolidColorBrush colorConverter = new();
 	protected MenuItem[]? menuItems;
 	Command<CommandBag>? mauiCommand;
 
@@ -65,13 +70,13 @@ public class PJCollectionViewHandler : CollectionViewHandler
 			{
 				Text = item.Text,
 				Command = mauiCommand,
-				CommandParameter = new CommandBag(model, item)
+				CommandParameter = new CommandBag(model, item),
+				Icon = item.Icon?.CreateIconElementFromIconPath(),
 			};
 
-			if (!string.IsNullOrEmpty(item.Icon))
-			{
-				menuFlyoutItem.Icon = item.Icon.CreateIconElementFromIconPath();
-			}
+			menuFlyoutItem.SetBinding(WMenuFlyoutItem.IsEnabledProperty, new WBinding { Path = new PropertyPath(nameof(item.IsEnabled)), Source = item });
+
+			menuFlyoutItem.SetBinding(WMenuFlyoutItem.ForegroundProperty, new WBinding { Path = new PropertyPath(nameof(item.TextColor)), Source = item, Converter = colorConverter });
 
 			menuFlyout.Items.Add(menuFlyoutItem);
 		}

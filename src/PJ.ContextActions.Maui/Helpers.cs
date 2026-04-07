@@ -79,6 +79,9 @@ static class Helpers
 					}
 				});
 
+			if (!item.IsEnabled)
+				action.Attributes = UIMenuElementAttributes.Disabled;
+
 			yield return action;
 		}
 

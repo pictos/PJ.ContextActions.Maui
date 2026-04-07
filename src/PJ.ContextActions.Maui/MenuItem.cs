@@ -21,6 +21,24 @@ public class MenuItem : Element
 		set => SetValue(CommandProperty, value);
 	}
 
+	public static readonly BindableProperty IsEnabledProperty =
+		BindableProperty.Create(nameof(IsEnabled), typeof(bool), typeof(MenuItem), true);
+
+	public bool IsEnabled
+	{
+		get => (bool)GetValue(IsEnabledProperty);
+		set => SetValue(IsEnabledProperty, value);
+	}
+
+	public static readonly BindableProperty TextColorProperty =
+		BindableProperty.Create(nameof(TextColor), typeof(Color), typeof(MenuItem), null);
+
+	public Color? TextColor
+	{
+		get => (Color?)GetValue(TextColorProperty);
+		set => SetValue(TextColorProperty, value);
+	}
+
 	public bool UseMenuResultModel { get; set; }
 
 	public event EventHandler? Clicked;

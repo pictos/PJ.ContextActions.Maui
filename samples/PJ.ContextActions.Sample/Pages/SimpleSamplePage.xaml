@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+	x:Class="PJ.ContextActions.Sample.Pages.SimpleSamplePage"
+	xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui"
+	Title="Simple Sample">
+
+	<ScrollView>
+		<VerticalStackLayout Padding="20" Spacing="24">
+
+			<!-- ContextActionBehavior on a view -->
+			<Label
+				FontAttributes="Bold"
+				FontSize="16"
+				Text="Behavior on a view" />
+			<Label Text="Long-press the image below to see the context menu." />
+
+			<Image
+				HorizontalOptions="Center"
+				Source="dotnet_bot.png"
+				WidthRequest="180">
+				<Image.Behaviors>
+					<pj:ContextActionBehavior>
+						<pj:ContextActionBehavior.MenuItems>
+							<pj:MenuItem
+								Clicked="MenuItem_Clicked"
+								Icon="dotnet_bot.png"
+								Text="Primeiro"
+								UseMenuResultModel="True" />
+							<pj:MenuItem
+								Command="{Binding ClickCommand}"
+								Text="Segundo"
+								UseMenuResultModel="True" />
+						</pj:ContextActionBehavior.MenuItems>
+					</pj:ContextActionBehavior>
+				</Image.Behaviors>
+			</Image>
+
+			<BoxView
+				HeightRequest="1"
+				Color="LightGray" />
+
+			<!-- ContextActions on a CollectionView -->
+			<Label
+				FontAttributes="Bold"
+				FontSize="16"
+				Text="ContextActions on a CollectionView" />
+			<Label Text="Long-press any item in the list below to see the context menu." />
+
+			<CollectionView
+				x:Name="cv"
+				HeightRequest="300">
+				<pj:ContextActions.ContextActions>
+					<pj:MenuItem
+						Clicked="MenuItem_Clicked"
+						Icon="dotnet_bot.png"
+						Text="Primeiro"
+						UseMenuResultModel="True" />
+					<pj:MenuItem
+						Command="{Binding ClickCommand}"
+						Text="Segundo"
+						UseMenuResultModel="True" />
+				</pj:ContextActions.ContextActions>
+				<CollectionView.ItemTemplate>
+					<DataTemplate>
+						<Label
+							Padding="8,12"
+							Text="{Binding .}" />
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+
+		</VerticalStackLayout>
+	</ScrollView>
+</ContentPage>

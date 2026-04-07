@@ -1,4 +1,7 @@
-﻿using Android.Views;
+﻿using Android.Text;
+using Android.Text.Style;
+using Android.Views;
+using Microsoft.Maui.Platform;
 using AView = Android.Views.View;
 using View = Microsoft.Maui.Controls.View;
 
@@ -47,7 +50,22 @@ sealed class AViewContextMenuListener : Java.Lang.Object, AView.IOnCreateContext
 			item.BindingContext = view.BindingContext;
 			var mItem = menu.Add(0, index + 1, index, item.Text);
 			Assert(mItem is not null);
+			mItem.SetEnabled(item.IsEnabled);
+			ApplyTextColor(mItem, item);
 			mItem.SetOnMenuItemClickListener(new MenuItemClickListener(new(view, item)));
 		}
+	}
+
+	static void ApplyTextColor(IMenuItem mItem, MenuItem item)
+	{
+		if (item.TextColor is not { } textColor)
+			return;
+
+		var spannable = new SpannableString(item.Text);
+		spannable.SetSpan(
+			new ForegroundColorSpan(textColor.ToPlatform()),
+			0, item.Text.Length,
+			SpanTypes.ExclusiveExclusive);
+		mItem.SetTitle(spannable);
 	}
 }

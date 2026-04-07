@@ -1,20 +1,29 @@
 # PJ.ContextActions.Maui
 
+A .NET MAUI library that adds long-press context menus to any view and to `CollectionView` items — with support for icons, text color, and per-item enabled/disabled state.
+
 <img width="400" height="800" alt="image" src="https://github.com/user-attachments/assets/2fd7879a-fffa-4c6f-b722-0375238157bc" />
 
+> **Supported platforms:** Android, iOS, Windows.  
+> **MacCatalyst is not supported.**  
+> **Icons are not supported on Android** (platform limitation).  
+> **TextColor is not supported on iOS** (platform limitation — `UIAction` has no text color API).
 
-## Usage
+---
 
-> **Note:** MacCatalyst is NOT supported by this library. Supported platforms are Android, iOS, and Windows (via .NET MAUI).
-> **Note:** Android does NOT support icons, this is a platform limitation.
+## Installation
 
-### 1. Installation
-Add the PJ.ContextActions.Maui [NuGet package](https://www.nuget.org/packages/PJSouzaSoftware.ContextActions.Maui) to your .NET MAUI project.
+Add the [NuGet package](https://www.nuget.org/packages/PJSouzaSoftware.ContextActions.Maui) to your .NET MAUI project:
 
+```
+dotnet add package PJSouzaSoftware.ContextActions.Maui
+```
 
+---
 
-### 2. Initialization
-In your `MauiProgram.cs`, add `.UseContextActions()` to the builder:
+## Setup
+
+Register the library in `MauiProgram.cs`:
 
 ```csharp
 using PJ.ContextActions.Maui;
@@ -24,81 +33,19 @@ public static MauiApp CreateMauiApp()
     var builder = MauiApp.CreateBuilder();
     builder
         .UseMauiApp<App>()
-        .ConfigureFonts(fonts =>
-        {
-            fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
-            fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
-        })
         .UseContextActions();
-    // ...
+
     return builder.Build();
 }
 ```
 
+---
 
-### 3. Usage Example (CollectionView)
+## Usage
 
-#### XAML
-Add the pj namespace and use `<pj:ContextActions.ContextActions>` inside your CollectionView:
+### Context menu on any view (`ContextActionBehavior`)
 
-```xml
-<ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:pj="clr-namespace:PJ.ContextActions.Maui;assembly=PJ.ContextActions.Maui">
-
-    <CollectionView x:Name="cv">
-        <pj:ContextActions.ContextActions>
-            <pj:MenuItem Clicked="MenuItem_Clicked" Text="Primeiro" />
-            <pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
-        </pj:ContextActions.ContextActions>
-        <CollectionView.ItemTemplate>
-            <DataTemplate>
-                <Label Text="{Binding .}" />
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
-</ContentPage>
-```
-
-#### Code-behind (C#)
-Set up the ItemsSource, Command, and event handler in your page's code-behind:
-
-```csharp
-public partial class MainPage : ContentPage
-{
-    public Command<object> ClickCommand { get; }
-
-    public MainPage()
-    {
-        InitializeComponent();
-        var list = new List<string>();
-        for (var i = 0; i < 100; i++)
-            list.Add($"Item {i}");
-        cv.ItemsSource = list;
-
-        ClickCommand = new Command<object>((i) =>
-        {
-            System.Diagnostics.Debug.WriteLine($"Segundo item clicado: {i}");
-        });
-
-        BindingContext = this;
-    }
-
-    void MenuItem_Clicked(object sender, EventArgs e)
-    {
-        System.Diagnostics.Debug.WriteLine($"Primeiro item clicado: {sender}");
-    }
-}
-```
-
-### 4. Using ContextActions in Any View
-
-You can use ContextActions with any view by attaching the `ContextActionBehavior` to the view's Behaviors collection. For example, to add context actions to an `Image`:
-
-> **Warning:** The `MenuItem`'s `BindingContext` will be the same as the control's `BindingContext`. However, the `ContextActionBehavior` itself does not have a `BindingContext`.
-
-#### XAML
+Attach `ContextActionBehavior` to the `Behaviors` collection of any MAUI view. The menu appears on long-press (Android/iOS) or right-click (Windows).
 
 ```xml
 <ContentPage
@@ -110,11 +57,8 @@ You can use ContextActions with any view by attaching the `ContextActionBehavior
         <Image.Behaviors>
             <pj:ContextActionBehavior>
                 <pj:ContextActionBehavior.MenuItems>
-                    <pj:MenuItem
-                        Clicked="MenuItem_Clicked"
-                        Icon="dotnet_bot.png"
-                        Text="Primeiro" />
-                    <pj:MenuItem Command="{Binding ClickCommand}" Text="Segundo" />
+                    <pj:MenuItem Text="Edit"   Clicked="OnEdit"   Icon="edit.png" />
+                    <pj:MenuItem Text="Delete" Command="{Binding DeleteCommand}" />
                 </pj:ContextActionBehavior.MenuItems>
             </pj:ContextActionBehavior>
         </Image.Behaviors>
@@ -122,105 +66,168 @@ You can use ContextActions with any view by attaching the `ContextActionBehavior
 </ContentPage>
 ```
 
-#### Code-behind (C#)
+> **Note:** `MenuItem.BindingContext` inherits from the host view's `BindingContext`. The `ContextActionBehavior` itself does not have a `BindingContext`.
+
+---
+
+### Context menu on `CollectionView` items
+
+Use the `ContextActions` attached property on a `CollectionView`. Each item in the list gets the same set of menu items; commands receive the tapped data item as their parameter.
+
+```xml
+<CollectionView x:Name="cv">
+    <pj:ContextActions.ContextActions>
+        <pj:MenuItem Text="Edit"   Clicked="OnEdit"   Icon="edit.png" />
+        <pj:MenuItem Text="Delete" Command="{Binding DeleteCommand}" />
+    </pj:ContextActions.ContextActions>
+
+    <CollectionView.ItemTemplate>
+        <DataTemplate>
+            <Label Text="{Binding .}" />
+        </DataTemplate>
+    </CollectionView.ItemTemplate>
+</CollectionView>
+```
+
+---
+
+## MenuItem properties
+
+| Property | Type | Default | Description |
+|---|---|---|---|
+| `Text` | `string` | *(required)* | Label shown in the menu |
+| `Icon` | `string?` | `null` | Image asset name. Not supported on Android. |
+| `IsEnabled` | `bool` | `true` | Whether the item is interactive. Supports binding. |
+| `TextColor` | `Color?` | `null` | Color of the menu item text. Supported on Android and Windows only. Supports binding. |
+| `Command` | `ICommand?` | `null` | Command executed on tap. Receives the data item as parameter. |
+| `UseMenuResultModel` | `bool` | `false` | When `true`, the command/event parameter is wrapped in a `MenuItemResult` that includes both the item text and the data item. |
+
+---
+
+## TextColor
+
+Set a per-item text color directly in XAML:
+
+```xml
+<pj:MenuItem Text="✏️ Edit"      TextColor="CornflowerBlue" Clicked="OnEdit"   />
+<pj:MenuItem Text="⭐ Favourite" TextColor="Gold"            Clicked="OnFavour" />
+<pj:MenuItem Text="🗑️ Delete"   TextColor="Crimson"         Clicked="OnDelete" />
+```
+
+`TextColor` also supports binding, so it can be driven from a ViewModel:
+
+```xml
+<pj:MenuItem
+    Text="Premium Feature 🔒"
+    TextColor="{Binding PremiumColor}" />
+```
+
+---
+
+## IsEnabled
+
+Disable individual menu items to indicate unavailable actions:
+
+```xml
+<pj:MenuItem Text="Free Action"       IsEnabled="True"  Clicked="OnFree"    />
+<pj:MenuItem Text="Premium Feature 🔒" IsEnabled="False" Clicked="OnPremium" />
+```
+
+`IsEnabled` supports binding, so it can be toggled at runtime from a ViewModel:
+
+```xml
+<pj:MenuItem
+    Text="Premium Feature 🔒"
+    IsEnabled="{Binding IsPremiumEnabled}" />
+```
 
 ```csharp
-public partial class MainPage : ContentPage
+public class MyViewModel : INotifyPropertyChanged
 {
-    public Command<object> ClickCommand { get; }
+    bool _isPremiumEnabled;
 
-    public MainPage()
+    public bool IsPremiumEnabled
     {
-        InitializeComponent();
-
-        ClickCommand = new Command<object>((i) =>
-        {
-            System.Diagnostics.Debug.WriteLine($"Segundo item clicado: {i}");
-        });
-
-        BindingContext = this;
+        get => _isPremiumEnabled;
+        set { _isPremiumEnabled = value; OnPropertyChanged(); }
     }
 
-    void MenuItem_Clicked(object sender, EventArgs e)
+    // Toggle from a button, a purchase callback, etc.
+    public ICommand ToggleCommand => new Command(() => IsPremiumEnabled = !IsPremiumEnabled);
+}
+```
+
+---
+
+## MenuItemResult
+
+When `UseMenuResultModel="True"`, the `Clicked` event sender and `Command` parameter are a `MenuItemResult` instead of the raw data item:
+
+```csharp
+void OnEdit(object sender, EventArgs e)
+{
+    if (sender is MenuItemResult result)
     {
-        System.Diagnostics.Debug.WriteLine($"Primeiro item clicado: {sender}");
+        Console.WriteLine(result.Text);   // menu item text, e.g. "Edit"
+        Console.WriteLine(result.Item);   // the data item from the collection
     }
 }
 ```
 
-### 5. Custom Implementations for Platform-Specific Behaviors
+---
 
-ContextActionBehavior allows you to provide your own custom implementation for platform-specific delegates and listeners.
+## Custom platform implementations
 
-#### iOS Custom Delegate
+`ContextActionBehavior` exposes factory properties so you can swap in your own platform delegates.
 
-You can provide a custom `UIContextMenuInteractionDelegate` implementation by setting the `InteractionDelegateFactory` property:
+### iOS
 
 ```csharp
-var image = new Image();
 var behavior = new ContextActionBehavior
 {
-    MenuItems = { /* your menu items */ },
+    MenuItems = { /* items */ },
 #if IOS
-    InteractionDelegateFactory = () => new MyCustomInteractionDelegate()
+    InteractionDelegateFactory = () => new MyInteractionDelegate()
 #endif
 };
-image.Behaviors.Add(behavior);
 ```
 
-Your custom implementation might look like:
-
 ```csharp
-// You can also inherit from the Delegate used in this library and expand for that.
-public class MyCustomInteractionDelegate : UIContextMenuInteractionDelegate
+public class MyInteractionDelegate : UIContextMenuInteractionDelegate
 {
-    // Custom implementation for handling context menu on iOS
-    public override UIContextMenuConfiguration? GetConfigurationForMenu(UIContextMenuInteraction interaction, CGPoint location)
+    public override UIContextMenuConfiguration? GetConfigurationForMenu(
+        UIContextMenuInteraction interaction, CGPoint location)
     {
-        // Your custom logic here
-        return UIContextMenuConfiguration.Create(null, null, menu => {
-            // Create and return your custom UIMenu
-        });
+        return UIContextMenuConfiguration.Create(null, null, _ => /* your UIMenu */);
     }
 }
 ```
 
-#### Android Custom Listener
-
-Similarly, for Android you can provide a custom `IOnCreateContextMenuListener` implementation:
+### Android
 
 ```csharp
-var image = new Image();
 var behavior = new ContextActionBehavior
 {
-    MenuItems = { /* your menu items */ },
+    MenuItems = { /* items */ },
 #if ANDROID
-    ContextMenuListenerFactory = () => new MyCustomContextMenuListener()
+    ContextMenuListenerFactory = () => new MyContextMenuListener()
 #endif
 };
-image.Behaviors.Add(behavior);
 ```
 
-Your custom implementation might look like:
-
 ```csharp
-// You can also inherit from the Listener used in this library and expand for that.
-public class MyCustomContextMenuListener : Java.Lang.Object, Android.Views.View.IOnCreateContextMenuListener
+public class MyContextMenuListener : Java.Lang.Object, Android.Views.View.IOnCreateContextMenuListener
 {
     public void OnCreateContextMenu(IContextMenu? menu, Android.Views.View? v, IContextMenuContextMenuInfo? menuInfo)
     {
-        // Your custom logic for creating context menu items
-        if (menu is null && v is null)
-        {
-            return;
-        }
-
-        // Add custom menu items
-        // Handle clicks, etc.
+        // build your menu
     }
 }
 ```
 
+---
+
 ## Support
 
-This project is open source and maintained by one person. If you need urgent fixes or custom features, you can support the development through [github sponsor](https://github.com/sponsors/pictos/sponsorships?sponsor=pictos&tier_id=485056&preview=false).
+This project is open source and maintained by one person. If you need urgent fixes or custom features, you can support the development through [GitHub Sponsors](https://github.com/sponsors/pictos/sponsorships?sponsor=pictos&tier_id=485056&preview=false).
+
