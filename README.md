@@ -227,9 +227,7 @@ The build and release workflows use .NET SDK 10.0.402. The macOS build uses
 GitHub's `xcode-27` runner image (macOS 27, currently in preview) with Xcode 27.0.
 
 Version tags matching `vMAJOR.MINOR.PATCH` trigger `.github/workflows/release-nuget.yml`.
-NuGet publishing uses [trusted publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
-with the `PedroJesus` NuGet account and the policy for `pictos/PJ.ContextActions.Maui`,
-workflow `release-nuget.yml`, and package `PJSouzaSoftware.ContextActions.Maui`.
+NuGet publishing uses [trusted publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing).
 The release job exchanges a GitHub OIDC token for a short-lived API key; no
 `NUGET_KEY` repository secret is needed. The package push also uploads the matching
 symbol package.
