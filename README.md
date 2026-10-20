@@ -221,6 +221,19 @@ public class MyCustomContextMenuListener : Java.Lang.Object, Android.Views.View.
 }
 ```
 
+## CI and releases
+
+The build and release workflows use .NET SDK 10.0.402. The macOS build uses
+GitHub's `xcode-27` runner image (macOS 27, currently in preview) with Xcode 27.0.
+
+Version tags matching `vMAJOR.MINOR.PATCH` trigger `.github/workflows/release-nuget.yml`.
+NuGet publishing uses [trusted publishing](https://learn.microsoft.com/en-us/nuget/nuget-org/trusted-publishing)
+with the `PedroJesus` NuGet account and the policy for `pictos/PJ.ContextActions.Maui`,
+workflow `release-nuget.yml`, and package `PJSouzaSoftware.ContextActions.Maui`.
+The release job exchanges a GitHub OIDC token for a short-lived API key; no
+`NUGET_KEY` repository secret is needed. The package push also uploads the matching
+symbol package.
+
 ## Support
 
 This project is open source and maintained by one person. If you need urgent fixes or custom features, you can support the development through [github sponsor](https://github.com/sponsors/pictos/sponsorships?sponsor=pictos&tier_id=485056&preview=false).
