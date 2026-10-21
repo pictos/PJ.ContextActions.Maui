@@ -15,6 +15,9 @@ env:
 jobs:
   release-nuget:
     runs-on: windows-latest
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
     - uses: actions/checkout@v4
@@ -26,7 +29,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 10.0.x
+        dotnet-version: 10.0.402
 
     - name: Workload install
       run: |
@@ -39,9 +42,13 @@ jobs:
       uses: battila7/get-version-action@v2
     - name: Pack
       run: dotnet pack ${{env.LIB_CSPROJ}} -c Release -p:PackageVersion=${{steps.get_version.outputs.version-without-v}} -o . --include-symbols --include-source
+    - name: NuGet login
+      uses: NuGet/login@v1
+      id: login
+      with:
+        user: PedroJesus
     - name: Publish
       env:
-        API_KEY: ${{secrets.NUGET_KEY}}
+        API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
       run: |
-        dotnet nuget push ${{env.PACKAGE_NAME}}.${{ steps.get_version.outputs.version-without-v }}.nupkg --api-key ${{secrets.NUGET_KEY}} --source https://api.nuget.org/v3/index.json
-        dotnet nuget push ${{env.PACKAGE_NAME}}.${{ steps.get_version.outputs.version-without-v }}.snupkg --api-key ${{secrets.NUGET_KEY}} --source https://symbols.nuget.org/
+        dotnet nuget push ${{env.PACKAGE_NAME}}.${{ steps.get_version.outputs.version-without-v }}.nupkg --api-key "$env:API_KEY" --source https://api.nuget.org/v3/index.json
